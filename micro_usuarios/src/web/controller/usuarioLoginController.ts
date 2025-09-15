@@ -20,3 +20,29 @@ export const login: RequestHandler = async (req, res) => {
     });
   }
 };
+
+export const cadastro: RequestHandler = async (req, res) => {
+  try {
+    const { name, email, password, hash, phone } = req.body;
+
+    const novoUsuario = await usuarioLoginService.cadastro({
+      id: "",
+      name,
+      email,
+      password,
+      hash,
+      phone,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+
+    res.status(201).json({
+      message: "Usuário cadastrado com sucesso",
+      usuario: novoUsuario,
+    });
+  } catch (e) {
+    res.status(500).json({
+      message: `Erro no cadastro: ${e}`,
+    });
+  }
+};
