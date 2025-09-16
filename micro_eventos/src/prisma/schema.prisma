@@ -24,6 +24,6 @@ model Eventos {
   idade_minima     String
   visibilidade     String
   status           String
-  created_at       String
-  updated_at       String
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 }

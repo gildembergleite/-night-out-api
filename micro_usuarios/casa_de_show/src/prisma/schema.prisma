@@ -15,18 +15,21 @@ datasource db {
 }
 
 model CasaDeShow {
-  id_usuario          String  @id @default(uuid())
-  nome_fantasia       String
-  cpf                 String
-  capacidade          String
-  cep                 String
-  logradouro          String
-  numero              String
-  complemento         String
-  bairro              String
-  cidade              String
-  uf                  String
-  geo_lat             String
-  geo_lng             String
-  created_at          DateTime  @default(now())
+  id             String   @id @default(uuid())
+  artistaId      String
+  artista        Artista  @relation(fields: [artistaId], references: [id])
+
+  nome_fantasia  String
+  cpf            String
+  capacidade     String
+  cep            String
+  logradouro     String
+  numero         String
+  complemento    String
+  bairro         String
+  cidade         String
+  uf             String
+  geo_lat        String
+  geo_lng        String
+  created_at     DateTime @default(now())
 }

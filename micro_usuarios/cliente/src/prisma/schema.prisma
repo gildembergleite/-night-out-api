@@ -15,9 +15,12 @@ datasource db {
 }
 
 model Cliente {
-  id_usuario          String  @id @default(uuid())
-  apelido             String
-  preferencias        String
-  data_nascimento     String
-  created_at          DateTime  @default(now())
+  id              String   @id @default(uuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id])
+
+  apelido         String
+  preferencias    String
+  data_nascimento String
+  created_at      DateTime @default(now())
 }
