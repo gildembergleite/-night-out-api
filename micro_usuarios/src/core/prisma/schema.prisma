@@ -1,8 +1,4 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+// schema.prisma
 
 generator client {
   provider = "prisma-client-js"
@@ -23,5 +19,57 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  artistas  Artista[]
+  artista       Artista?
+  casaDeShow    CasaDeShow?
+  cliente       Cliente?
+}
+
+model Artista {
+  id             String   @id @default(uuid())
+  userId         String   @unique
+  user           User     @relation(fields: [userId], references: [id])
+
+  nome_artistico String
+  genero_musical String
+  cache_min      String
+  bio            String
+  url_portfolio  String
+  verificado     Boolean  @default(false)
+  created_at     DateTime @default(now())
+
+  casasDeShow    CasaDeShow[]
+}
+
+model CasaDeShow {
+  id            String   @id @default(uuid())
+  userId        String   @unique
+  user          User     @relation(fields: [userId], references: [id])
+
+  artistaId     String?
+  artista       Artista? @relation(fields: [artistaId], references: [id])
+
+  nome_fantasia String
+  cpf           String
+  capacidade    String
+  cep           String
+  logradouro    String
+  numero        String
+  complemento   String
+  bairro        String
+  cidade        String
+  uf            String
+  geo_lat       String
+  geo_lng       String
+  created_at    DateTime @default(now())
+}
+
+model Cliente {
+  id              String   @id @default(uuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id])
+
+  apelido         String
+  preferencias    String
+  data_nascimento String
+  created_at      DateTime @default(now())
 }
