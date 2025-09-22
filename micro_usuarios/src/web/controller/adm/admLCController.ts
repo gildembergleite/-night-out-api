@@ -1,15 +1,15 @@
 import type { RequestHandler } from "express";
-import * as usuarioLoginService from "../service/usuarioLoginService";
+import * as admLoginService from "../../service/adm/admService";
 
 export const login: RequestHandler = async (req, res) => {
   try {
-    const name = String(req.body.name);
+    const email = String(req.body.email);
     const password = String(req.body.password);
 
-    const result = await usuarioLoginService.login(name, password);
+    const result = await admLoginService.login(email, password);
 
     if (!result) {
-      res.status(401).json({ message: "Usuário ou senha inválidos" });
+      res.status(401).json({ message: "Email ou senha inválidos!" });
       return;
     }
 
@@ -23,21 +23,21 @@ export const login: RequestHandler = async (req, res) => {
 
 export const cadastro: RequestHandler = async (req, res) => {
   try {
-    const { name, email, password, hash, phone } = req.body;
+    const { name, email, password, hash, phone, cargo, permissao_notes } =
+      req.body;
 
-    const novoUsuario = await usuarioLoginService.cadastro({
-      id: "",
+    const novoUsuario = await admLoginService.cadastro({
       name,
       email,
       password,
       hash,
       phone,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      cargo,
+      permissao_notes,
     });
 
     res.status(201).json({
-      message: "Usuário cadastrado com sucesso",
+      message: "Administrador cadastrado com sucesso!",
       usuario: novoUsuario,
     });
   } catch (e) {

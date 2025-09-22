@@ -1,10 +1,10 @@
 import express from "express";
-import UsuarioRoutes from "./web/routes/usuarioRoutes";
+import AdmRoutes from "./web/routes/adm/admRoutes";
 
 const app = express();
 
 app.use(express.json());
-app.use("/user", UsuarioRoutes)
+app.use("/adm", AdmRoutes)
 
 const PORT = 3000;
 
