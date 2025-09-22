@@ -1,0 +1,70 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Chat {
+  id_chat     String             @id @default(uuid())
+  titulo      String
+  criado_em   DateTime
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  participantes ChatParticipante[]
+  mensagens     Mensagem[]
+}
+
+model ChatParticipante {
+  id_participante String       @id @default(uuid())
+  id_chat         String
+  entrou_em       DateTime
+  saiu_em         DateTime?
+  role            String
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  chat            Chat         @relation(fields: [id_chat], references: [id_chat])
+  mensagens       Mensagem[]
+}
+
+model Mensagem {
+  id_mensagem   String       @id @default(uuid())
+  id_chat       String
+  id_participante String
+  conteudo      String
+  enviado_em    DateTime
+  editado_em    DateTime?
+  apagado       Boolean      @default(false)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  chat          Chat         @relation(fields: [id_chat], references: [id_chat])
+  participante  ChatParticipante @relation(fields: [id_participante], references: [id_participante])
+}
+
+model Avaliacao {
+  id_avaliacao   String       @id @default(uuid())
+  id_alvo        String       
+  nota           String
+  comentario     String
+  publicado_em   DateTime
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+}
+
+model PropostaShow {
+  id_proposta    String       @id @default(uuid())
+  id_evento      String      
+  data_proposta  DateTime
+  data_evento    DateTime
+  valor_ofertado String
+  status         String
+  termos         String
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+}
