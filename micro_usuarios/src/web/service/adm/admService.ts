@@ -8,16 +8,18 @@ export async function login(email: string, password: string) {
     where: {
       user: {
         email,
-        password
-      }
+        password,
+      },
     },
     include: {
-      user: true
-    }
+      user: true,
+    },
   });
 
   if (!administrador) {
-    return console.log("O administrador não existe ou foi inserido incorretamente");
+    return console.log(
+      "O administrador não existe ou foi inserido incorretamente"
+    );
   }
 
   return message;
@@ -48,7 +50,7 @@ export async function cadastro(dados: {
         },
       },
       include: {
-        user: true, 
+        user: true,
       },
     });
 
