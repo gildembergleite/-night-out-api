@@ -19,8 +19,6 @@ model LoteIngresso {
   data_fim    DateTime
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-
-  ingressos Ingresso[]
 }
 
 model Ingresso {
@@ -33,7 +31,6 @@ model Ingresso {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  lote         LoteIngresso   @relation(fields: [id_lote], references: [id_lote])
   pagamento    PagamentoIngresso?
 }
 
