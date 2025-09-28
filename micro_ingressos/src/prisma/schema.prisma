@@ -1,0 +1,37 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model LoteIngresso {
+  id_lote       String       @id @default(uuid())
+  nome          String
+  tipo          String
+  preco         String
+  qtd_total     String
+  qtd_vendida   String       @default("0")
+  inicio_vendas DateTime
+  fim_vendas    DateTime
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  ingressos     Ingresso[]
+}
+
+model Ingresso {
+  id_ingresso  String       @id @default(uuid())
+  id_lote      String
+  codigo_qr    String       @unique
+  status       String
+  checkin_em   DateTime?
+  validado     Boolean      @default(false)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  lote         LoteIngresso @relation(fields: [id_lote], references: [id_lote])
+}
