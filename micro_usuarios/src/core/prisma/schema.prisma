@@ -7,81 +7,77 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id        String   @id @default(uuid())
-  name      String
-  email     String   @unique
-  password  String
-  hash      String
-  phone     String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+enum UsuarioTipo {
+  CLIENTE
+  ARTISTA
+  ADMINISTRADOR
+  CASASHOW
+}
 
-  artista       Artista?
-  casaDeShow    CasaDeShow?
-  cliente       Cliente?
+model Usuario {
+  id_usuario String      @id @default(uuid())
+  nome       String
+  email      String      @unique
+  senha_hash String
+  tipo       UsuarioTipo
+  telefone   String?
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+
+  cliente      Cliente?
+  artista      Artista?
   administrador Administrador?
+  casaShow     CasaShow?
+}
+
+model Cliente {
+  id_usuario      String   @id
+  apelido         String?
+  preferencias    String?
+  data_nascimento DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  usuario Usuario @relation(fields: [id_usuario], references: [id_usuario])
 }
 
 model Artista {
-  id             String   @id @default(uuid())
-  userId         String   @unique
-  user           User     @relation(fields: [userId], references: [id])
-
-  nome_artistico String
+  id_usuario    String   @id
+  nome_artista  String
   genero_musical String
-  cache_min      String
-  bio            String
-  url_portfolio  String
-  verificado     Boolean  @default(false)
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  cache_min     String
+  descricao     String?
+  portifolio    String?
+  verificado    Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
-  casasDeShow    CasaDeShow[] @relation("ArtistaCasaDeShow")
+  usuario Usuario @relation(fields: [id_usuario], references: [id_usuario])
 }
 
-model CasaDeShow {
-  id            String   @id @default(uuid())
-  userId        String   @unique
-  user          User     @relation(fields: [userId], references: [id])
+model Administrador {
+  id_usuario      String   @id
+  cargo           String
+  permissao_nivel String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
+  usuario Usuario @relation(fields: [id_usuario], references: [id_usuario])
+}
+
+model CasaShow {
+  id_usuario    String   @id
   nome_fantasia String
-  cpf           String
+  cnpj          String
   capacidade    String
-  cep           String
-  logradouro    String
-  numero        String
-  complemento   String
+  endereco      String
   bairro        String
-  cidade        String
-  uf            String
+  estado        String
+  cep           String
   geo_lat       String
   geo_lng       String
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
-  artistas      Artista[] @relation("ArtistaCasaDeShow")
-}
-
-model Cliente {
-  id              String   @id @default(uuid())
-  userId          String   @unique
-  user            User     @relation(fields: [userId], references: [id])
-
-  apelido         String
-  preferencias    String
-  data_nascimento String
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-}
-
-model Administrador {
-  id              String   @id @default(uuid())
-  userId          String   @unique
-  user            User     @relation(fields: [userId], references: [id])
-
-  cargo           String
-  permissao_notes String
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  usuario Usuario @relation(fields: [id_usuario], references: [id_usuario])
 }
