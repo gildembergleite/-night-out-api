@@ -1,4 +1,4 @@
-generator client {
+fekfhdeufndjkfndgenerator client {
   provider = "prisma-client-js"
   output   = "../generated/prisma"
 }
@@ -9,29 +9,42 @@ datasource db {
 }
 
 model LoteIngresso {
-  id_lote       String       @id @default(uuid())
-  nome          String
-  tipo          String
-  preco         String
-  qtd_total     String
-  qtd_vendida   String       @default("0")
-  inicio_vendas DateTime
-  fim_vendas    DateTime
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
+  id_lote    String   @id @default(uuid())
+  id_evento  String
+  nome       String
+  preco      String
+  quantidade String
+  qtd_vendida String
+  data_inicio DateTime
+  data_fim    DateTime
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  ingressos     Ingresso[]
+  ingressos Ingresso[]
 }
 
 model Ingresso {
-  id_ingresso  String       @id @default(uuid())
-  id_lote      String
-  codigo_qr    String       @unique
-  status       String
-  checkin_em   DateTime?
-  validado     Boolean      @default(false)
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
+  id_ingresso String   @id @default(uuid())
+  id_lote     String
+  id_usuario  String
+  codigo_qr   String
+  status      String
+  checkin_em  DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  lote         LoteIngresso @relation(fields: [id_lote], references: [id_lote])
+  lote         LoteIngresso   @relation(fields: [id_lote], references: [id_lote])
+  pagamento    PagamentoIngresso?
+}
+
+model PagamentoIngresso {
+  id_pagamento String   @id @default(uuid())
+  id_ingresso  String
+  metodo       String
+  status       String
+  valor        String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  ingresso Ingresso @relation(fields: [id_ingresso], references: [id_ingresso])
 }
