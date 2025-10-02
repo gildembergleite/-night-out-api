@@ -1,5 +1,3 @@
-// schema.prisma
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -9,67 +7,77 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id        String   @id @default(uuid())
-  name      String
-  email     String   @unique
-  password  String
-  hash      String
-  phone     String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  artista       Artista?
-  casaDeShow    CasaDeShow?
-  cliente       Cliente?
+enum UsuarioTipo {
+  CLIENTE
+  ARTISTA
+  ADMINISTRADOR
+  CASASHOW
 }
 
-model Artista {
-  id             String   @id @default(uuid())
-  userId         String   @unique
-  user           User     @relation(fields: [userId], references: [id])
+model Usuario {
+  id_usuario String      @id @default(uuid())
+  nome       String
+  email      String      @unique
+  senha_hash String
+  tipo       UsuarioTipo
+  telefone   String?
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
 
-  nome_artistico String
-  genero_musical String
-  cache_min      String
-  bio            String
-  url_portfolio  String
-  verificado     Boolean  @default(false)
-  created_at     DateTime @default(now())
-
-  casasDeShow    CasaDeShow[]
-}
-
-model CasaDeShow {
-  id            String   @id @default(uuid())
-  userId        String   @unique
-  user          User     @relation(fields: [userId], references: [id])
-
-  artistaId     String?
-  artista       Artista? @relation(fields: [artistaId], references: [id])
-
-  nome_fantasia String
-  cpf           String
-  capacidade    String
-  cep           String
-  logradouro    String
-  numero        String
-  complemento   String
-  bairro        String
-  cidade        String
-  uf            String
-  geo_lat       String
-  geo_lng       String
-  created_at    DateTime @default(now())
+  cliente      Cliente?
+  artista      Artista?
+  administrador Administrador?
+  casaShow     CasaShow?
 }
 
 model Cliente {
-  id              String   @id @default(uuid())
-  userId          String   @unique
-  user            User     @relation(fields: [userId], references: [id])
+  id_usuario      String   @id
+  apelido         String?
+  preferencias    String?
+  data_nascimento DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
-  apelido         String
-  preferencias    String
-  data_nascimento String
-  created_at      DateTime @default(now())
+  usuario Usuario @relation(fields: [id_usuario], references: [id_usuario])
+}
+
+model Artista {
+  id_usuario    String   @id
+  nome_artista  String
+  genero_musical String
+  cache_min     String
+  descricao     String?
+  portifolio    String?
+  verificado    Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  usuario Usuario @relation(fields: [id_usuario], references: [id_usuario])
+}
+
+model Administrador {
+  id_usuario      String   @id
+  cargo           String
+  permissao_nivel String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  usuario Usuario @relation(fields: [id_usuario], references: [id_usuario])
+}
+
+model CasaShow {
+  id_usuario    String   @id
+  nome_fantasia String
+  cnpj          String
+  capacidade    String
+  endereco      String
+  bairro        String
+  estado        String
+  cep           String
+  geo_lat       String
+  geo_lng       String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  usuario Usuario @relation(fields: [id_usuario], references: [id_usuario])
 }

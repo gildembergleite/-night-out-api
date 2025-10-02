@@ -1,0 +1,71 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Evento {
+  id_evento   String   @id @default(uuid())
+  id_usuario  String
+  titulo      String
+  descricao   String?
+  data_inicio DateTime
+  data_fim    DateTime
+  local       String
+  status      String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  propostasCasa     PropostaCasa[]
+  propostasArtista  PropostaArtista[]
+  eventoArtistas    EventoArtista[]
+}
+
+model PropostaCasa {
+  id_proposta_casa String   @id @default(uuid())
+  id_artista       String
+  id_evento        String
+  data_proposta    DateTime
+  data_evento      DateTime
+  valor_ofertado   String
+  status           String
+  termos           String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  evento Evento @relation(fields: [id_evento], references: [id_evento])
+}
+
+model PropostaArtista {
+  id_proposta_artista String   @id @default(uuid())
+  id_casa             String
+  id_evento           String
+  data_proposta       DateTime
+  data_evento         DateTime
+  valor_ofertado      String
+  status              String
+  termos              String?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  evento Evento @relation(fields: [id_evento], references: [id_evento])
+}
+
+model EventoArtista {
+  id_evento         String
+  id_usuario        String
+  funcao            String
+  contrato_acordado String?
+  cache_final       String?
+  created_final     String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@id([id_evento, id_usuario])
+
+  evento Evento @relation(fields: [id_evento], references: [id_evento])
+}
