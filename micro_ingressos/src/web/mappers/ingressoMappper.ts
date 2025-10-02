@@ -1,5 +1,5 @@
-import { Ingresso } from "@prisma/client"; // Update the path as needed
-import type { IngressoDTO } from "../types/ingresso_dtos/ingressoDTO"; // Update the path to where IngressoDTO is defined
+import { Ingresso } from "@prisma/client";
+import type { IngressoDTO } from "../types/ingresso_dtos/ingressoDTO"; 
 
 export async function toForm(
   ingresso: Ingresso

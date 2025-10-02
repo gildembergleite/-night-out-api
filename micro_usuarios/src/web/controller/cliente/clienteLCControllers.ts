@@ -55,4 +55,3 @@ export const cadastro: RequestHandler = async (req, res) => {
     });
   }
 };
-
