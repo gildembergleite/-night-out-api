@@ -143,4 +143,23 @@ export async function editarCliente(id_cliente: string, clienteDTO: ClienteDTO) 
   return clienteAtualizado;
 }
 
+export async function deletarCliente(id_cliente: string) {
+  const cliente = await prisma.cliente.findUnique({
+    where: { id_usuario: id_cliente },
+    include: { usuario: true },
+  });
+
+  if (!cliente) throw new Error("Cliente não encontrado.");
+
+  await prisma.usuario.delete({
+    where: { id_usuario: cliente.usuario.id_usuario },
+  });
+
+  await prisma.cliente.delete({
+    where: { id_usuario: id_cliente },
+  });
+
+  return { message: "Cliente deletado com sucesso!" };
+}
+
 
