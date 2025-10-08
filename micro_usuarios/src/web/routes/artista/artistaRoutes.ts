@@ -1,9 +1,22 @@
 import { Router } from "express";
-import * as artistaController from "../../controller/artista/artistaLCController";
+import {
+  login,
+  cadastro,
+  listarArtistas,
+  buscarArtistaPorId,
+  cadastrarArtista,
+  editarArtista,
+  deletarArtista,
+} from "../../controller/artista/artistaLCController";
 
-const router = Router();
+const ArtistaRoutes = Router();
 
-router.post("/cadastro", artistaController.cadastro);
-router.post("/login", artistaController.login);
+ArtistaRoutes.post("/login", login);
+ArtistaRoutes.post("/cadastro", cadastro);
+ArtistaRoutes.get("/", listarArtistas);
+ArtistaRoutes.get("/:id", buscarArtistaPorId);
+ArtistaRoutes.post("/cadastrar", cadastrarArtista);
+ArtistaRoutes.put("/:id", editarArtista);
+ArtistaRoutes.delete("/:id", deletarArtista);
 
-export default router;
+export default ArtistaRoutes;

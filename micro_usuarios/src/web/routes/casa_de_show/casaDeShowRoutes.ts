@@ -1,9 +1,22 @@
 import { Router } from "express";
-import * as casaController from "../../controller/casa_de_show/casaDeShowLCController";
+import {
+  login,
+  cadastro,
+  listarCasasDeShow,
+  buscarCasaDeShowPorId,
+  cadastrarCasa,
+  editarCasa,
+  deletarCasa,
+} from "../../controller/casa_de_show/casaDeShowLCController";
 
-const router = Router();
+const CasaRoutes = Router();
 
-router.post("/cadastro", casaController.cadastro);
-router.post("/login", casaController.login);
+CasaRoutes.post("/login", login);
+CasaRoutes.post("/cadastro", cadastro);
+CasaRoutes.get("/", listarCasasDeShow);
+CasaRoutes.get("/:id", buscarCasaDeShowPorId);
+CasaRoutes.post("/cadastrar", cadastrarCasa);
+CasaRoutes.put("/:id", editarCasa);
+CasaRoutes.delete("/:id", deletarCasa);
 
-export default router;
+export default CasaRoutes;

@@ -1,10 +1,20 @@
 import { Router } from "express";
-import * as clienteController from "../../controller/cliente/clienteLCControllers";
+import {
+  login,
+  cadastro,
+  listarClientes,
+  buscarClientePorId,
+  cadastrarCliente,
+  editarCliente,
+} from "../../controller/cliente/clienteLCControllers";
 
-const router = Router();
+const ClienteRoutes = Router();
 
-router.post("/cadastro", clienteController.cadastro);
+ClienteRoutes.post("/login", login);
+ClienteRoutes.post("/cadastro", cadastro);
+ClienteRoutes.get("/", listarClientes);
+ClienteRoutes.get("/:id", buscarClientePorId);
+ClienteRoutes.post("/cadastrar", cadastrarCliente);
+ClienteRoutes.put("/:id", editarCliente);
 
-router.post("/login", clienteController.login);
-
-export default router;
+export default ClienteRoutes;
