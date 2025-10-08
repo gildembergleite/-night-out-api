@@ -121,7 +121,10 @@ export async function cadastrarCliente(clienteDTO: ClienteDTO) {
   return novoCliente;
 }
 
-export async function editarCliente(id_cliente: string, clienteDTO: ClienteDTO) {
+export async function editarCliente(
+  id_cliente: string,
+  clienteDTO: ClienteDTO
+) {
   const clienteAtualizado = await prisma.cliente.update({
     where: { id_usuario: id_cliente },
     data: {
@@ -142,5 +145,3 @@ export async function editarCliente(id_cliente: string, clienteDTO: ClienteDTO) 
 
   return clienteAtualizado;
 }
-
-
