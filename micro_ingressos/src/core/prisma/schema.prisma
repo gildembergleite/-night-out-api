@@ -1,6 +1,6 @@
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
+ 
 }
 
 datasource db {
@@ -34,7 +34,7 @@ model Ingresso {
   updatedAt   DateTime @updatedAt
 
   lote        LoteIngresso      @relation(fields: [id_lote], references: [id_lote])
-  pagamento   PagamentoIngresso?
+  pagamentos  PagamentoIngresso[]
 }
 
 model PagamentoIngresso {
