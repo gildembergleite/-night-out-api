@@ -112,8 +112,7 @@ export async function cadastrarADM(admDTO: AdministradorDTO) {
     include: { usuario: true },
   });
 
-  return novoADM;
-}
+  if (!adm) throw new Error("Administrador não encontrado");
 
 export async function editarADM(
   id_administrador: string,
