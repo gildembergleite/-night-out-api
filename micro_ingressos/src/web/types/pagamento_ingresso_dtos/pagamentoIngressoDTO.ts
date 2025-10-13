@@ -7,5 +7,5 @@ export interface PagamentoIngressoDTO {
   status: string;
   valor: string;
 
-  ingresso: ingressoDTO.IngressoDTO[];
+  ingresso: ingressoDTO.IngressoDTO; 
 }

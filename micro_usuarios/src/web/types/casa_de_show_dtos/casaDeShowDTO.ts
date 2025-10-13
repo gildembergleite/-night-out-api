@@ -1,7 +1,6 @@
 import { UsuarioDTO } from "../usuario_dtos/usuarioDTO";
 
 export interface CasaDeShowDTO {
-  id_usuario: string;
   nome_fantasia: string;
   cnpj: string;
   capacidade: string;

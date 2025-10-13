@@ -1,40 +1,6 @@
 import { prisma } from "../../libs/prismaClient";
 import { ArtistaDTO } from "../../types/artista_dtos/artistaDTO";
 
-export async function login(email: string, senha: string) {
-  const artista = await prisma.artista.findFirst({
-    where: {
-      usuario: {
-        email,
-        senha_hash: senha,
-        tipo: "ARTISTA",
-      },
-    },
-    include: {
-      usuario: true,
-    },
-  });
-
-  if (!artista) {
-    return null;
-  }
-
-  return {
-    message: "Artista logado com sucesso",
-    artista: {
-      id: artista.id_usuario,
-      nome: artista.usuario.nome,
-      email: artista.usuario.email,
-      telefone: artista.usuario.telefone,
-      nome_artista: artista.nome_artista,
-      genero_musical: artista.genero_musical,
-      cache_min: artista.cache_min,
-      descricao: artista.descricao,
-      portifolio: artista.portifolio,
-    },
-  };
-}
-
 export async function cadastro(dados: {
   nome: string;
   email: string;
@@ -81,29 +47,64 @@ export async function cadastro(dados: {
   };
 }
 
-export async function listarArtistas() {
-  const listaArtistas = await prisma.artista.findMany({
-    include: { usuario: true },
+export async function login(email: string, senha: string) {
+  const artista = await prisma.artista.findFirst({
+    where: {
+      usuario: {
+        email,
+        senha_hash: senha,
+        tipo: "ARTISTA",
+      },
+    },
+    include: {
+      usuario: true,
+    },
   });
 
-  return listaArtistas.map((artista) => ({
+  if (!artista) {
+    return null;
+  }
+
+  return {
+    message: "Artista logado com sucesso",
+    artista: {
+      id: artista.id_usuario,
+      nome: artista.usuario.nome,
+      email: artista.usuario.email,
+      telefone: artista.usuario.telefone,
+      nome_artista: artista.nome_artista,
+      genero_musical: artista.genero_musical,
+      cache_min: artista.cache_min,
+      descricao: artista.descricao,
+      portifolio: artista.portifolio,
+    },
+  };
+}
+
+export async function listarArtistas() {
+  const lista = await prisma.artista.findMany({
+    include: {
+      usuario: true,
+    },
+  });
+
+  return lista.map((artista) => ({
     id: artista.id_usuario,
     nome: artista.usuario.nome,
-    email: artista.usuario.email,
-    telefone: artista.usuario.telefone,
-    nome_artista: artista.nome_artista,
-    genero_musical: artista.genero_musical,
-    cache_min: artista.cache_min,
-    descricao: artista.descricao,
-    portifolio: artista.portifolio,
   }));
 }
 
 export async function buscarArtistaPorId(id: string) {
   const artista = await prisma.artista.findUnique({
     where: { id_usuario: id },
-    include: { usuario: true },
+    include: {
+      usuario: true,
+    },
   });
+
+  if (!artista) {
+    return null;
+  }
 
   return artista;
 }
@@ -132,7 +133,10 @@ export async function cadastrarArtista(artistaDTO: ArtistaDTO) {
   return novoArtista;
 }
 
-export async function editarArtista(id_artista: string, artistaDTO: ArtistaDTO) {
+export async function editarArtista(
+  id_artista: string,
+  artistaDTO: ArtistaDTO
+) {
   const artistaAtualizado = await prisma.artista.update({
     where: { id_usuario: id_artista },
     data: {
@@ -157,20 +161,11 @@ export async function editarArtista(id_artista: string, artistaDTO: ArtistaDTO) 
 }
 
 export async function deletarArtista(id_artista: string) {
-  const artista = await prisma.artista.findUnique({
-    where: { id_usuario: id_artista },
-    include: { usuario: true },
-  });
+  if (!id_artista) {
+    throw new Error("ID do artista é obrigatório para deletar.");
+  }
 
-  if (!artista) throw new Error("Artista não encontrado.");
-
-  await prisma.usuario.delete({
-    where: { id_usuario: artista.usuario.id_usuario },
-  });
-
-  await prisma.artista.delete({
+  return await prisma.artista.delete({
     where: { id_usuario: id_artista },
   });
-
-  return { message: "Artista deletado com sucesso!" };
 }
