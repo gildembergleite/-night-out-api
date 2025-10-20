@@ -3,6 +3,7 @@ import AdmRoutes from "./web/routes/adm/admRoutes";
 import clienteRoutes from "./web/routes/cliente/clienteRoutes";
 import artistaRoutes from "./web/routes/artista/artistaRoutes";
 import casaDeShowRoutes from "./web/routes/casa_de_show/casaDeShowRoutes";
+import 'dotenv/config';
 
 const app = express();
 

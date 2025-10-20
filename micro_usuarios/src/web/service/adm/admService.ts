@@ -76,6 +76,7 @@ export async function listarAdministradores() {
   return lista.map((admin) => ({
     id: admin.id_usuario,
     nome: admin.usuario.nome,
+    email: admin.usuario.email,
   }));
 }
 
@@ -112,7 +113,8 @@ export async function cadastrarADM(admDTO: AdministradorDTO) {
     include: { usuario: true },
   });
 
-  if (!adm) throw new Error("Administrador não encontrado");
+  if (!novoADM) throw new Error("Administrador não encontrado");
+}
 
 export async function editarADM(
   id_administrador: string,
