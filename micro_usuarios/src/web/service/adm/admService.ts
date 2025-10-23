@@ -73,11 +73,16 @@ export async function listarAdministradores() {
     },
   });
 
-  return lista.map((admin) => ({
-    id: admin.id_usuario,
-    nome: admin.usuario.nome,
-    email: admin.usuario.email,
-  }));
+  return lista.map(
+    (admin: {
+      id_usuario: string;
+      usuario: { nome: string; email: string };
+    }) => ({
+      id: admin.id_usuario,
+      nome: admin.usuario.nome,
+      email: admin.usuario.email,
+    })
+  );
 }
 
 export async function buscarAdministradorPorId(id: string) {
@@ -114,6 +119,8 @@ export async function cadastrarADM(admDTO: AdministradorDTO) {
   });
 
   if (!novoADM) throw new Error("Administrador não encontrado");
+
+  return novoADM;
 }
 
 export async function editarADM(
