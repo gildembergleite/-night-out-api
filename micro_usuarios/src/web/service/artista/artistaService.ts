@@ -91,6 +91,7 @@ export async function listarArtistas() {
   return lista.map((artista) => ({
     id: artista.id_usuario,
     nome: artista.usuario.nome,
+    email: artista.usuario.email,
   }));
 }
 

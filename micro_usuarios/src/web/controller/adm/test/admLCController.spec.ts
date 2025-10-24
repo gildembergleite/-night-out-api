@@ -4,7 +4,7 @@ import { Request, Response, NextFunction } from "express";
 import * as admController from "../../../controller/adm/admLCController";
 import { UsuarioTipo } from "@prisma/client";
 
-describe("listarAdministradores", () => {
+describe("Listar Administradores", () => {
   let mockRequest: Partial<Request>;
   let mockResponse: Partial<Response>;
   let mockNext: NextFunction;
