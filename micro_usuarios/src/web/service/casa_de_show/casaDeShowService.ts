@@ -1,3 +1,4 @@
+import e from "express";
 import { prisma } from "../../libs/prismaClient";
 import { CasaDeShowDTO } from "../../types/casa_de_show_dtos/casaDeShowDTO";
 
@@ -97,6 +98,7 @@ export async function listarCasasDeShow() {
   return lista.map((casa) => ({
     id: casa.id_usuario,
     nome: casa.usuario.nome,
+    endereco: casa.endereco,
   }));
 }
 
