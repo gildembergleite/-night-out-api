@@ -1,10 +1,7 @@
-import { listarCasasDeShow } from "./../casaDeShowLCController";
 import * as casaDeShowService from "../../../service/casa_de_show/casaDeShowService";
-import e, { Request, Response, NextFunction } from "express";
+import  { Request, Response, NextFunction } from "express";
 import * as casaDeShowController from "../../../controller/casa_de_show/casaDeShowLCController";
 import { UsuarioTipo } from "@prisma/client";
-import { REPLCommand } from "repl";
-import { any } from "zod";
 
 describe("listarCasasDeShow", () => {
   let mockRequest: Partial<Request>;
