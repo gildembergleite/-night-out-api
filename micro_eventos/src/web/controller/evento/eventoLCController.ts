@@ -8,10 +8,7 @@ export const criarEvento: RequestHandler = async (req, res) => {
 
         const novoEvento = await eventoService.criarEvento(dados);
 
-        res.status(201).json({
-            message: "Evento criado com sucesso",
-            evento: novoEvento,
-        });
+        res.status(201).json(novoEvento);
     } catch (e) {
         res.status(500).json({message: `Erro ao criar evento: ${e}`});
     }
@@ -49,10 +46,7 @@ export const editarEvento: RequestHandler = async (req, res) => {
 
         const eventoAtualizado = await eventoService.atualizarEvento(id, dados);
 
-        res.status(200).json({
-            message: "Evento atualizado com sucesso",
-            evento: eventoAtualizado,
-        });
+        res.status(200).json(eventoAtualizado);
     } catch (e) {
         res.status(500).json({message: `Erro ao editar evento: ${e}`});
     }

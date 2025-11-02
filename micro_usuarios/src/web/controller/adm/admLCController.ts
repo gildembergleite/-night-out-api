@@ -84,6 +84,7 @@ export const cadastrarADM: RequestHandler = async (req, res) => {
       administrador: novoADM,
     });
   } catch (e) {
+    console.error(e);
     res.status(500).json({
       message: `Erro ao cadastrar administrador: ${e}`,
     });

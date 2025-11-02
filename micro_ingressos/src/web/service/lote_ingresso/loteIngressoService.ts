@@ -4,32 +4,18 @@ import { LoteIngressoDTO } from "../../types/lote_ingresso_dtos/loteIngressoDTO"
 export async function criarLoteIngresso(dados: LoteIngressoDTO) {
   const novoLote = await prisma.loteIngresso.create({
     data: {
-      id_lote: dados.id_lote,
       id_evento: dados.id_evento,
       nome: dados.nome,
       preco: dados.preco,
       quantidade: dados.quantidade,
-      qtd_vendida: dados.qtd_vendida,
+      qtd_vendida: dados.qtd_vendida ?? "0",
       data_inicio: dados.data_inicio,
       data_fim: dados.data_fim,
-      
-      ingressos: {
-        create: dados.ingresso?.map((i) => ({
-          id_ingresso: i.id_ingresso,
-          id_usuario: i.id_usuario,
-          codigo_qr: i.codigo_qr,
-          status: i.status ?? "DISPONIVEL",
-          checkin_em: i.checkin_em,
-        })),
-      },
-    },
-    include: {
-      ingressos: true,
     },
   });
 
   return {
-    message: "Lote de ingressos criado com sucesso",
+    message: "Lote de ingressos criado com sucesso!",
     lote: novoLote,
   };
 }
@@ -38,7 +24,6 @@ export async function listarLotesIngresso() {
   const lotes = await prisma.loteIngresso.findMany({
     include: {
       ingressos: true,
-      evento: true,
     },
   });
 
@@ -48,7 +33,6 @@ export async function listarLotesIngresso() {
     preco: l.preco,
     quantidade: l.quantidade,
     qtd_vendida: l.qtd_vendida,
-    evento: l.evento ? l.evento.nome : null,
     total_ingressos: l.ingressos.length,
   }));
 }
@@ -58,7 +42,6 @@ export async function buscarLotePorId(id_lote: string) {
     where: { id_lote },
     include: {
       ingressos: true,
-      evento: true,
     },
   });
 

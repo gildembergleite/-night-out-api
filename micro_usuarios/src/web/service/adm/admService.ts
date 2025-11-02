@@ -125,21 +125,21 @@ export async function cadastrarADM(admDTO: AdministradorDTO) {
 
 export async function editarADM(
   id_administrador: string,
-  admDTO: AdministradorDTO
+  admDTO: Partial<AdministradorDTO>
 ) {
   const admAtualizado = await prisma.administrador.update({
     where: { id_usuario: id_administrador },
     data: {
       cargo: admDTO.cargo,
       permissao_nivel: admDTO.permissao_nivel,
-      usuario: {
+      usuario: admDTO.usuario ? {
         update: {
           nome: admDTO.usuario[0].nome,
           email: admDTO.usuario[0].email,
           senha_hash: admDTO.usuario[0].senha_hash,
           telefone: admDTO.usuario[0].telefone,
         },
-      },
+      } : undefined,
     },
     include: { usuario: true },
   });
