@@ -1,21 +1,53 @@
 import type { RequestHandler } from "express";
 import * as artistaService from "../../service/artista/artistaService";
+import bcrypt from "bcryptjs"; 
+import jwt from "jsonwebtoken";
+
+
+const JWT_SECRET = process.env.JWT_SECRET || "SEGREDO_SUPER_FORTE_DO_JWT"; 
+
+
 
 export const login: RequestHandler = async (req, res) => {
   try {
     const email = String(req.body.email);
     const senha = String(req.body.senha);
 
-    const result = await artistaService.login(email, senha);
+    
+    const artista = await artistaService.buscarArtistaParaLogin(email); 
 
-    if (!result) {
+    if (!artista) {
       res.status(401).json({ message: "Email ou senha inválidos!" });
       return;
     }
 
-    res.status(200).json(result);
+ 
+    const isMatch = await bcrypt.compare(senha, artista.usuario.senha_hash);
+
+    if (!isMatch) {
+      res.status(401).json({ message: "Email ou senha inválidos!" });
+      return;
+    }
+
+  
+    const token = jwt.sign(
+      { 
+        id: artista.id_usuario, 
+        email: artista.usuario.email,
+        tipo: artista.usuario.tipo 
+      },
+      JWT_SECRET,
+      { expiresIn: "1h" }
+    );
+
+    res.status(200).json({
+      message: "Login realizado com sucesso!",
+      token: token,
+      artistaId: artista.id_usuario,
+    });
   } catch (e) {
-    res.status(500).json({ message: `Erro de login: ${e}` });
+    console.error("Erro no login:", e);
+    res.status(500).json({ message: `Erro de login interno.` });
   }
 };
 
@@ -24,7 +56,7 @@ export const cadastro: RequestHandler = async (req, res) => {
     const {
       nome,
       email,
-      senha,
+      senha, 
       telefone,
       nome_artista,
       genero_musical,
@@ -33,10 +65,15 @@ export const cadastro: RequestHandler = async (req, res) => {
       portifolio,
     } = req.body;
 
+ 
+    const salt = await bcrypt.genSalt(10);
+    const senha_hash = await bcrypt.hash(senha, salt);
+
+    
     const novoUsuario = await artistaService.cadastro({
       nome,
       email,
-      senha,
+      senha: senha_hash,
       telefone,
       nome_artista,
       genero_musical,
@@ -50,10 +87,12 @@ export const cadastro: RequestHandler = async (req, res) => {
       usuario: novoUsuario,
     });
   } catch (e) {
-    res.status(500).json({ message: `Erro no cadastro: ${e}` });
+    console.error("Erro no cadastro:", e);
+    res.status(500).json({ message: `Erro no cadastro interno.` });
   }
 };
 
+// --- FUNÇÕES DE CRUD (Sem alteração na lógica) ---
 export const listarArtistas: RequestHandler = async (req, res) => {
   try {
     const lista = await artistaService.listarArtistas();

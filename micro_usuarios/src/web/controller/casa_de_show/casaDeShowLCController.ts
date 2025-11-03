@@ -1,21 +1,53 @@
 import type { RequestHandler } from "express";
 import * as casaService from "../../service/casa_de_show/casaDeShowService";
+import bcrypt from "bcryptjs"; 
+import jwt from "jsonwebtoken"; 
+
+
+const JWT_SECRET = process.env.JWT_SECRET || "SEGREDO_SUPER_FORTE_DO_JWT"; 
+
+
+
 
 export const login: RequestHandler = async (req, res) => {
   try {
     const email = String(req.body.email);
     const senha = String(req.body.senha);
 
-    const result = await casaService.login(email, senha);
+   
+    const casaDeShow = await casaService.buscarCasaParaLogin(email); 
 
-    if (!result) {
+    if (!casaDeShow) {
       res.status(401).json({ message: "Email ou senha inválidos!" });
       return;
     }
 
-    res.status(200).json(result);
+  
+    const isMatch = await bcrypt.compare(senha, casaDeShow.usuario.senha_hash);
+
+    if (!isMatch) {
+      res.status(401).json({ message: "Email ou senha inválidos!" });
+      return;
+    }
+
+    const token = jwt.sign(
+      { 
+        id: casaDeShow.id_usuario, 
+        email: casaDeShow.usuario.email,
+        tipo: casaDeShow.usuario.tipo
+      },
+      JWT_SECRET,
+      { expiresIn: "1h" }
+    );
+
+    res.status(200).json({
+      message: "Login realizado com sucesso!",
+      token: token,
+      casaDeShowId: casaDeShow.id_usuario,
+    });
   } catch (e) {
-    res.status(500).json({ message: `Erro de login: ${e}` });
+    console.error("Erro no login:", e);
+    res.status(500).json({ message: `Erro de login interno.` });
   }
 };
 
@@ -24,7 +56,7 @@ export const cadastro: RequestHandler = async (req, res) => {
     const {
       nome,
       email,
-      senha,
+      senha, 
       telefone,
       nome_fantasia,
       cnpj,
@@ -37,10 +69,15 @@ export const cadastro: RequestHandler = async (req, res) => {
       geo_lng,
     } = req.body;
 
+   
+    const salt = await bcrypt.genSalt(10);
+    const senha_hash = await bcrypt.hash(senha, salt);
+
+   
     const novaCasa = await casaService.cadastro({
       nome,
       email,
-      senha,
+      senha: senha_hash,
       telefone,
       nome_fantasia,
       cnpj,
@@ -58,9 +95,12 @@ export const cadastro: RequestHandler = async (req, res) => {
       casa: novaCasa,
     });
   } catch (e) {
-    res.status(500).json({ message: `Erro no cadastro: ${e}` });
+    console.error("Erro no cadastro:", e);
+    res.status(500).json({ message: `Erro no cadastro interno.` });
   }
 };
+
+// --- FUNÇÕES DE CRUD ---
 
 export const listarCasasDeShow: RequestHandler = async (req, res) => {
   try {
@@ -89,7 +129,8 @@ export const buscarCasaDeShowPorId: RequestHandler = async (req, res) => {
 
 export const cadastrarCasa: RequestHandler = async (req, res) => {
   try {
-    const casaDTO = req.body;
+    
+    const casaDTO = req.body; 
     const novaCasa = await casaService.cadastrarCasa(casaDTO);
 
     res.status(201).json({

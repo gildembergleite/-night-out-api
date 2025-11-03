@@ -8,13 +8,20 @@ import {
   editarCliente,
 } from "../../controller/cliente/clienteLCControllers";
 
+import { protect } from "../../../middleware/authMiddleware";
+
 const ClienteRoutes = Router();
 
 ClienteRoutes.post("/login", login);
+
 ClienteRoutes.post("/cadastro", cadastro);
-ClienteRoutes.get("/", listarClientes);
-ClienteRoutes.get("/:id", buscarClientePorId);
-ClienteRoutes.post("/cadastrar", cadastrarCliente);
-ClienteRoutes.put("/:id", editarCliente);
+
+ClienteRoutes.get("/", protect, listarClientes);
+
+ClienteRoutes.get("/:id", protect, buscarClientePorId);
+
+ClienteRoutes.post("/cadastrar", protect, cadastrarCliente);
+
+ClienteRoutes.put("/:id", protect, editarCliente);
 
 export default ClienteRoutes;

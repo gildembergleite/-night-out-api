@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "src/app.ts",
   "scripts": {
-    "test" : "jest --passWithNoTests",
+    "test": "jest --passWithNoTests",
     "dev": "ts-node-dev -r dotenv/config --respawn --transpile-only src/app.ts",
     "start": "ts-node src/app.ts"
   },

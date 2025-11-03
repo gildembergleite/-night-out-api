@@ -1,22 +1,57 @@
 import type { RequestHandler } from "express";
 import * as admService from "../../service/adm/admService";
+import bcrypt from "bcryptjs"; 
+import jwt from "jsonwebtoken";  
+
+ 
+const JWT_SECRET = process.env.JWT_SECRET || "SEGREDO_SUPER_FORTE_DO_JWT"; 
+
+ 
 
 export const login: RequestHandler = async (req, res) => {
   try {
     const email = String(req.body.email);
     const senha = String(req.body.senha);
 
-    const result = await admService.login(email, senha);
+   
+    const administrador = await admService.buscarAdministradorParaLogin(email);
 
-    if (!result) {
+    if (!administrador) {
+       
       res.status(401).json({ message: "Email ou senha inválidos!" });
       return;
     }
 
-    res.status(200).json(result);
+     
+    const isMatch = await bcrypt.compare(senha, administrador.usuario.senha_hash);
+
+    if (!isMatch) {
+      
+      res.status(401).json({ message: "Email ou senha inválidos!" });
+      return;
+    }
+
+  
+    const token = jwt.sign(
+      
+      { 
+        id: administrador.id_usuario, 
+        email: administrador.usuario.email,
+        tipo: administrador.usuario.tipo  
+      },
+      JWT_SECRET,
+      { expiresIn: "1h" }
+    );
+
+    res.status(200).json({
+      message: "Login realizado com sucesso!",
+      token: token,
+      administradorId: administrador.id_usuario,
+    });
   } catch (e) {
+    console.error("Erro no login:", e);
     res.status(500).json({
-      message: `Erro de login: ${e}`,
+      message: `Erro de login interno.`,
     });
   }
 };
@@ -25,10 +60,15 @@ export const cadastro: RequestHandler = async (req, res) => {
   try {
     const { nome, email, senha, telefone, cargo, permissao_nivel } = req.body;
 
-    const novoUsuario = await admService.cadastro({
+  
+    const salt = await bcrypt.genSalt(10);
+    const senha_hash = await bcrypt.hash(senha, salt);
+
+    
+    const novoAdministrador = await admService.cadastro({
       nome,
       email,
-      senha,
+      senha: senha_hash, 
       telefone,
       cargo,
       permissao_nivel,
@@ -36,14 +76,18 @@ export const cadastro: RequestHandler = async (req, res) => {
 
     res.status(201).json({
       message: "Administrador cadastrado com sucesso!",
-      usuario: novoUsuario,
+      usuario: novoAdministrador,
     });
   } catch (e) {
+    console.error("Erro no cadastro:", e);
+   
     res.status(500).json({
-      message: `Erro no cadastro: ${e}`,
+      message: `Erro no cadastro interno.`,
     });
   }
 };
+
+
 
 export const listarAdministradores: RequestHandler = async (req, res) => {
   try {
@@ -66,6 +110,8 @@ export const buscarAdministradorPorId: RequestHandler = async (req, res) => {
       return;
     }
 
+  
+
     res.status(200).json(adm);
   } catch (e) {
     res.status(500).json({
@@ -76,6 +122,7 @@ export const buscarAdministradorPorId: RequestHandler = async (req, res) => {
 
 export const cadastrarADM: RequestHandler = async (req, res) => {
   try {
+    
     const admDTO = req.body;
     const novoADM = await admService.cadastrarADM(admDTO);
 
@@ -96,6 +143,8 @@ export const editarADM: RequestHandler = async (req, res) => {
     const { id } = req.params;
     const admDTO = req.body;
 
+   
+    
     const admAtualizado = await admService.editarADM(id, admDTO);
     res.status(200).json({
       message: "Administrador atualizado com sucesso!",
