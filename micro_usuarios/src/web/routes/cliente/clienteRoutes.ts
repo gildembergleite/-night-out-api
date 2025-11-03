@@ -8,7 +8,7 @@ import {
   editarCliente,
 } from "../../controller/cliente/clienteLCControllers";
 
-import { protect } from "../../../middleware/authMiddleware";
+import { protect } from "../../../core/middleware/authMiddleware";
 
 const ClienteRoutes = Router();
 

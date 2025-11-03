@@ -9,7 +9,7 @@ import {
   deletarADM,
 } from "../../controller/adm/admLCController";
 
-import { protect } from "../../../middleware/authMiddleware";
+import { protect } from "../../../core/middleware/authMiddleware";
 
 const AdmRoutes = Router();
 

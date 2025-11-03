@@ -9,7 +9,7 @@ import {
   deletarArtista,
 } from "../../controller/artista/artistaLCController";
 
-import { protect } from "../../../middleware/authMiddleware";
+import { protect } from "../../../core/middleware/authMiddleware";
 
 const ArtistaRoutes = Router();
 

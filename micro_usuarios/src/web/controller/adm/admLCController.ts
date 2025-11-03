@@ -1,173 +1,95 @@
-import type { RequestHandler } from "express";
+import type { RequestHandler, Request, Response } from "express";
 import * as admService from "../../service/adm/admService";
-import bcrypt from "bcryptjs"; 
-import jwt from "jsonwebtoken";  
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import { asyncHandler } from "../../../core/middleware/asyncHandler";
+import { AppError } from "../../../core/middleware/validacao";
 
- 
-const JWT_SECRET = process.env.JWT_SECRET || "SEGREDO_SUPER_FORTE_DO_JWT"; 
+const JWT_SECRET = process.env.JWT_SECRET || "SEGREDO_SUPER_FORTE_DO_JWT";
 
- 
+export const login: RequestHandler = asyncHandler(async (req: Request, res: Response) => {
+  const email = String(req.body.email);
+  const senha = String(req.body.senha);
+  const administrador = await admService.buscarAdministradorParaLogin(email);
 
-export const login: RequestHandler = async (req, res) => {
-  try {
-    const email = String(req.body.email);
-    const senha = String(req.body.senha);
+  if (!administrador) throw new AppError("Email ou senha inválidos!", 401);
 
-   
-    const administrador = await admService.buscarAdministradorParaLogin(email);
+  const isMatch = await bcrypt.compare(senha, administrador.usuario.senha_hash);
+  if (!isMatch) throw new AppError("Email ou senha inválidos!", 401);
 
-    if (!administrador) {
-       
-      res.status(401).json({ message: "Email ou senha inválidos!" });
-      return;
-    }
+  const token = jwt.sign(
+    { id: administrador.id_usuario, email: administrador.usuario.email, tipo: administrador.usuario.tipo },
+    JWT_SECRET,
+    { expiresIn: "1h" }
+  );
 
-     
-    const isMatch = await bcrypt.compare(senha, administrador.usuario.senha_hash);
+  res.status(200).json({
+    message: "Login realizado com sucesso!",
+    token: token,
+    administradorId: administrador.id_usuario,
+  });
+});
 
-    if (!isMatch) {
-      
-      res.status(401).json({ message: "Email ou senha inválidos!" });
-      return;
-    }
+export const cadastro: RequestHandler = asyncHandler(async (req: Request, res: Response) => {
+  const { nome, email, senha, telefone, cargo, permissao_nivel } = req.body;
 
-  
-    const token = jwt.sign(
-      
-      { 
-        id: administrador.id_usuario, 
-        email: administrador.usuario.email,
-        tipo: administrador.usuario.tipo  
-      },
-      JWT_SECRET,
-      { expiresIn: "1h" }
-    );
+  const telefoneLimpo = telefone ? telefone.replace(/\D/g, "") : "";
+  if (telefoneLimpo && (telefoneLimpo.length < 10 || telefoneLimpo.length > 11))
+    throw new AppError("O telefone deve conter 10 ou 11 dígitos numéricos.", 400);
 
-    res.status(200).json({
-      message: "Login realizado com sucesso!",
-      token: token,
-      administradorId: administrador.id_usuario,
-    });
-  } catch (e) {
-    console.error("Erro no login:", e);
-    res.status(500).json({
-      message: `Erro de login interno.`,
-    });
-  }
-};
+  const salt = await bcrypt.genSalt(10);
+  const senha_hash = await bcrypt.hash(senha, salt);
 
-export const cadastro: RequestHandler = async (req, res) => {
-  try {
-    const { nome, email, senha, telefone, cargo, permissao_nivel } = req.body;
+  const novoAdministrador = await admService.cadastro({
+    nome,
+    email,
+    senha: senha_hash,
+    telefone,
+    cargo,
+    permissao_nivel,
+  });
 
-  
-    const salt = await bcrypt.genSalt(10);
-    const senha_hash = await bcrypt.hash(senha, salt);
+  res.status(201).json({
+    message: "Administrador cadastrado com sucesso!",
+    usuario: novoAdministrador,
+  });
+});
 
-    
-    const novoAdministrador = await admService.cadastro({
-      nome,
-      email,
-      senha: senha_hash, 
-      telefone,
-      cargo,
-      permissao_nivel,
-    });
+export const listarAdministradores: RequestHandler = asyncHandler(async (req: Request, res: Response) => {
+  const lista = await admService.listarAdministradores();
+  res.status(200).json(lista);
+});
 
-    res.status(201).json({
-      message: "Administrador cadastrado com sucesso!",
-      usuario: novoAdministrador,
-    });
-  } catch (e) {
-    console.error("Erro no cadastro:", e);
-   
-    res.status(500).json({
-      message: `Erro no cadastro interno.`,
-    });
-  }
-};
+export const buscarAdministradorPorId: RequestHandler = asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const adm = await admService.buscarAdministradorPorId(id);
+  if (!adm) throw new AppError("Administrador não encontrado.", 404);
+  res.status(200).json(adm);
+});
 
+export const cadastrarADM: RequestHandler = asyncHandler(async (req: Request, res: Response) => {
+  const admDTO = req.body;
+  const novoADM = await admService.cadastrarADM(admDTO);
+  res.status(201).json({
+    message: "Administrador cadastrado com sucesso!",
+    administrador: novoADM,
+  });
+});
 
+export const editarADM: RequestHandler = asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const admDTO = req.body;
+  const admAtualizado = await admService.editarADM(id, admDTO);
+  res.status(200).json({
+    message: "Administrador atualizado com sucesso!",
+    administrador: admAtualizado,
+  });
+});
 
-export const listarAdministradores: RequestHandler = async (req, res) => {
-  try {
-    const lista = await admService.listarAdministradores();
-    res.status(200).json(lista);
-  } catch (e) {
-    res.status(500).json({
-      message: `Erro ao listar administradores: ${e}`,
-    });
-  }
-};
-
-export const buscarAdministradorPorId: RequestHandler = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const adm = await admService.buscarAdministradorPorId(id);
-
-    if (!adm) {
-      res.status(404).json({ message: "Administrador não encontrado." });
-      return;
-    }
-
-  
-
-    res.status(200).json(adm);
-  } catch (e) {
-    res.status(500).json({
-      message: `Erro ao buscar administrador: ${e}`,
-    });
-  }
-};
-
-export const cadastrarADM: RequestHandler = async (req, res) => {
-  try {
-    
-    const admDTO = req.body;
-    const novoADM = await admService.cadastrarADM(admDTO);
-
-    res.status(201).json({
-      message: "Administrador cadastrado com sucesso!",
-      administrador: novoADM,
-    });
-  } catch (e) {
-    console.error(e);
-    res.status(500).json({
-      message: `Erro ao cadastrar administrador: ${e}`,
-    });
-  }
-};
-
-export const editarADM: RequestHandler = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const admDTO = req.body;
-
-   
-    
-    const admAtualizado = await admService.editarADM(id, admDTO);
-    res.status(200).json({
-      message: "Administrador atualizado com sucesso!",
-      administrador: admAtualizado,
-    });
-  } catch (e) {
-    res.status(500).json({
-      message: `Erro ao editar administrador: ${e}`,
-    });
-  }
-};
-
-export const deletarADM: RequestHandler = async (req, res) => {
-  try {
-    const { id } = req.params;
-    await admService.deletarADM(id);
-
-    res.status(200).json({
-      message: "Administrador deletado com sucesso!",
-    });
-  } catch (e) {
-    res.status(500).json({
-      message: `Erro ao deletar administrador: ${e}`,
-    });
-  }
-};
+export const deletarADM: RequestHandler = asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  await admService.deletarADM(id);
+  res.status(200).json({
+    message: "Administrador deletado com sucesso!",
+  });
+});

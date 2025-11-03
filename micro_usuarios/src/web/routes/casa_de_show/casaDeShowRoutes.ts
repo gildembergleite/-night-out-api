@@ -9,7 +9,7 @@ import {
   deletarCasa,
 } from "../../controller/casa_de_show/casaDeShowLCController";
 
-import { protect } from "../../../middleware/authMiddleware";
+import { protect } from "../../../core/middleware/authMiddleware";
 
 const CasaRoutes = Router();
 
