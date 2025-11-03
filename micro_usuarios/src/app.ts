@@ -1,5 +1,6 @@
-
 import express from "express";
+import cors from "cors";
+
 import AdmRoutes from "./web/routes/adm/admRoutes";
 import clienteRoutes from "./web/routes/cliente/clienteRoutes";
 import artistaRoutes from "./web/routes/artista/artistaRoutes";
@@ -7,7 +8,16 @@ import casaDeShowRoutes from "./web/routes/casa_de_show/casaDeShowRoutes";
 
 const app = express();
 
+app.use(
+  cors({
+    origin: ["http://localhost:5173", "http://localhost:3000"],
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+    credentials: true,
+  })
+);
+
 app.use(express.json());
+
 app.use("/adm", AdmRoutes);
 app.use("/cliente", clienteRoutes);
 app.use("/casaDeShow", casaDeShowRoutes);
