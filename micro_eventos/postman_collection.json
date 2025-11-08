@@ -1,0 +1,446 @@
+{
+	"info": {
+		"_postman_id": "night-out-eventos-collection",
+		"name": "Microserviço de Eventos - Night Out",
+		"description": "Coleção completa de endpoints do microserviço de eventos",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Eventos",
+			"item": [
+				{
+					"name": "Criar Evento",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id_usuario\": \"usuario-id-aqui\",\n  \"titulo\": \"Show de Rock\",\n  \"descricao\": \"Evento de música rock com várias bandas\",\n  \"data_inicio\": \"2024-12-31T20:00:00Z\",\n  \"data_fim\": \"2025-01-01T02:00:00Z\",\n  \"local\": \"Casa de Show XYZ\",\n  \"status\": \"DISPONÍVEL\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/evento",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"evento"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Todos os Eventos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/evento",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"evento"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Buscar Evento por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/evento/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"evento",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "evento-id-aqui",
+									"description": "ID do evento"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Editar Evento",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"titulo\": \"Show de Rock - Atualizado\",\n  \"descricao\": \"Evento atualizado com novas informações\",\n  \"data_inicio\": \"2024-12-31T20:00:00Z\",\n  \"data_fim\": \"2025-01-01T02:00:00Z\",\n  \"local\": \"Casa de Show XYZ\",\n  \"status\": \"CONFIRMADO\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/evento/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"evento",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "evento-id-aqui",
+									"description": "ID do evento"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Evento Artista",
+			"item": [
+				{
+					"name": "Criar Evento Artista",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id_evento\": \"evento-id-aqui\",\n  \"id_usuario\": \"artista-id-aqui\",\n  \"funcao\": \"Vocalista\",\n  \"contrato_acordado\": \"Contrato assinado\",\n  \"cache_final\": \"5000.00\",\n  \"created_final\": \"2024-12-01T00:00:00Z\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/eventoArtista",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"eventoArtista"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Todos os Eventos Artistas",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/eventoArtista",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"eventoArtista"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Buscar Evento Artista por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/eventoArtista/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"eventoArtista",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "evento-artista-id-aqui",
+									"description": "ID do evento artista"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Editar Evento Artista",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"funcao\": \"Guitarrista\",\n  \"contrato_acordado\": \"Contrato atualizado\",\n  \"cache_final\": \"6000.00\",\n  \"created_final\": \"2024-12-01T00:00:00Z\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/eventoArtista/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"eventoArtista",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "evento-artista-id-aqui",
+									"description": "ID do evento artista"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Proposta Artista",
+			"item": [
+				{
+					"name": "Criar Proposta Artista",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id_casa\": \"casa-id-aqui\",\n  \"id_evento\": \"evento-id-aqui\",\n  \"data_proposta\": \"2024-12-01T00:00:00Z\",\n  \"data_evento\": \"2024-12-31T20:00:00Z\",\n  \"valor_ofertado\": \"10000.00\",\n  \"status\": \"PENDENTE\",\n  \"termos\": \"Termos e condições da proposta\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/propostaArtista",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"propostaArtista"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Todas as Propostas Artista",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/propostaArtista",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"propostaArtista"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Buscar Proposta Artista por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/propostaArtista/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"propostaArtista",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "proposta-artista-id-aqui",
+									"description": "ID da proposta artista"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Editar Proposta Artista",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"data_proposta\": \"2024-12-01T00:00:00Z\",\n  \"data_evento\": \"2024-12-31T20:00:00Z\",\n  \"valor_ofertado\": \"12000.00\",\n  \"status\": \"ACEITA\",\n  \"termos\": \"Termos atualizados\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/propostaArtista/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"propostaArtista",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "proposta-artista-id-aqui",
+									"description": "ID da proposta artista"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Proposta Casa",
+			"item": [
+				{
+					"name": "Criar Proposta Casa",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id_artista\": \"artista-id-aqui\",\n  \"id_evento\": \"evento-id-aqui\",\n  \"data_proposta\": \"2024-12-01T00:00:00Z\",\n  \"data_evento\": \"2024-12-31T20:00:00Z\",\n  \"valor_ofertado\": \"15000.00\",\n  \"status\": \"PENDENTE\",\n  \"termos\": \"Termos e condições da proposta\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/propostaCasa",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"propostaCasa"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Todas as Propostas Casa",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/propostaCasa",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"propostaCasa"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Buscar Proposta Casa por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/propostaCasa/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"propostaCasa",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "proposta-casa-id-aqui",
+									"description": "ID da proposta casa"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Editar Proposta Casa",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"data_proposta\": \"2024-12-01T00:00:00Z\",\n  \"data_evento\": \"2024-12-31T20:00:00Z\",\n  \"valor_ofertado\": \"18000.00\",\n  \"status\": \"ACEITA\",\n  \"termos\": \"Termos atualizados\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/propostaCasa/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"propostaCasa",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "proposta-casa-id-aqui",
+									"description": "ID da proposta casa"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3002",
+			"type": "string"
+		}
+	]
+}
+
