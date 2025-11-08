@@ -1,7 +1,7 @@
+import bcrypt from "bcryptjs";
 import type { RequestHandler } from "express";
-import * as artistaService from "../../service/artista/artistaService";
-import bcrypt from "bcryptjs"; 
 import jwt from "jsonwebtoken";
+import * as artistaService from "../../service/artista/artistaService";
 
 
 const JWT_SECRET = process.env.JWT_SECRET || "SEGREDO_SUPER_FORTE_DO_JWT"; 
@@ -95,7 +95,13 @@ export const cadastro: RequestHandler = async (req, res) => {
 // --- FUNÇÕES DE CRUD (Sem alteração na lógica) ---
 export const listarArtistas: RequestHandler = async (req, res) => {
   try {
-    const lista = await artistaService.listarArtistas();
+    const { page = 1, pageSize = 10 } = req.query;
+    const offset = (Number(page) - 1) * Number(pageSize);
+
+    const lista = await artistaService.listarArtistas({
+      offset,
+      limit: Number(pageSize),
+    });
     res.status(200).json(lista);
   } catch (e) {
     res.status(500).json({ message: `Erro ao listar artistas: ${e}` });

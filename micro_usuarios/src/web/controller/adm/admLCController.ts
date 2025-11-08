@@ -1,9 +1,9 @@
-import type { RequestHandler, Request, Response } from "express";
-import * as admService from "../../service/adm/admService";
 import bcrypt from "bcryptjs";
+import type { Request, RequestHandler, Response } from "express";
 import jwt from "jsonwebtoken";
 import { asyncHandler } from "../../../core/middleware/asyncHandler";
 import { AppError } from "../../../core/middleware/validacao";
+import * as admService from "../../service/adm/admService";
 
 const JWT_SECRET = process.env.JWT_SECRET || "SEGREDO_SUPER_FORTE_DO_JWT";
 
@@ -56,7 +56,14 @@ export const cadastro: RequestHandler = asyncHandler(async (req: Request, res: R
 });
 
 export const listarAdministradores: RequestHandler = asyncHandler(async (req: Request, res: Response) => {
-  const lista = await admService.listarAdministradores();
+  const { page = 1, pageSize = 10 } = req.query;
+  const offset = (Number(page) - 1) * Number(pageSize);
+  
+  const lista = await admService.listarAdministradores({
+    offset,
+    limit: Number(pageSize),
+  });
+
   res.status(200).json(lista);
 });
 
