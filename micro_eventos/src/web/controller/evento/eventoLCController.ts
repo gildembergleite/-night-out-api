@@ -15,8 +15,14 @@ export const criarEvento: RequestHandler = async (req, res) => {
 };
 
 export const listarEvento: RequestHandler = async (req, res) => {
+    const { page = 1, pageSize = 10 } = req.query;
+    const offset = (Number(page) - 1) * Number(pageSize);
+
     try {
-        const lista = await eventoService.listarEvento();
+        const lista = await eventoService.listarEvento({
+            offset,
+            limit: Number(pageSize),
+        });
         res.status(200).json(lista);
     } catch (e) {
         res.status(500).json({message: `Erro ao listar ingressos: ${e}`})

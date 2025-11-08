@@ -20,8 +20,11 @@ export async function criarEvento(dados: EventoDTO) {
     };
 }
 
-export async function listarEvento() {
-    const eventos = await prisma.evento.findMany({});
+export async function listarEvento({ offset, limit }: { offset: number; limit: number }) {
+    const eventos = await prisma.evento.findMany({
+        skip: offset,
+        take: limit,
+    });
 
     return eventos.map((e: any) => ({
         id_evento: e.id_evento,

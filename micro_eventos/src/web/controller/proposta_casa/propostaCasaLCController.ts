@@ -18,8 +18,14 @@ export const criarPropostaCasa: RequestHandler = async (req, res) => {
 }
 
 export const listarPropostaCasa: RequestHandler = async (req, res) => {
+    const { page = 1, pageSize = 10 } = req.query;
+    const offset = (Number(page) - 1) * Number(pageSize);
+
     try {
-        const lista = await propostaCasaService.listarPropostaCasa();
+        const lista = await propostaCasaService.listarPropostaCasa({
+            offset,
+            limit: Number(pageSize),
+        });
         res.status(200).json(lista);
     } catch (e) {
         res.status(500).json({message: `Erro ao listar proposta casa: ${e}`});

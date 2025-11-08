@@ -33,8 +33,11 @@ export async function criarPropostaCasa(dados: PropostaCasaDTO) {
     };
 }
 
-export async function listarPropostaCasa() {
-    const propostaCasa = await prisma.propostaCasa.findMany({});
+export async function listarPropostaCasa({ offset, limit }: { offset: number; limit: number }) {
+    const propostaCasa = await prisma.propostaCasa.findMany({
+        skip: offset,
+        take: limit,
+    });
 
     return propostaCasa.map((e: any) => ({
         id_proposta_casa: e.id_proposta_casa,

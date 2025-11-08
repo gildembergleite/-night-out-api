@@ -31,7 +31,7 @@ export async function criarEventoArtista(dados: EventoArtistaDTO) {
     };
 }
 
-export async function listarEventoArtista() {
+export async function listarEventoArtista({ offset, limit }: { offset: number; limit: number }) {
     const eventosArtistas = await prisma.eventoArtista.findMany({});
 
     return eventosArtistas.map((e: any) => ({
