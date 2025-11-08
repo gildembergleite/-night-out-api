@@ -1,7 +1,6 @@
 import { Router } from "express";
 import {
   buscarAdministradorPorId,
-  cadastrarADM,
   cadastro,
   deletarADM,
   editarADM,
@@ -9,7 +8,7 @@ import {
 } from "../../controller/adm/admLCController";
 
 import { validateApiKey } from "../../../core/middleware/apiKeyMiddleware";
-import { protect } from "../../../core/middleware/authMiddleware";
+import { isAdmin, protect } from "../../../core/middleware/authMiddleware";
 
 const AdmRoutes = Router();
 
@@ -17,14 +16,14 @@ const AdmRoutes = Router();
 
 AdmRoutes.post("/cadastro", validateApiKey, cadastro);
 
-AdmRoutes.get("/", protect, listarAdministradores);
+AdmRoutes.get("/", protect, isAdmin, listarAdministradores);
 
-AdmRoutes.get("/:id", protect, buscarAdministradorPorId);
+AdmRoutes.get("/:id", protect, isAdmin, buscarAdministradorPorId);
 
-AdmRoutes.post("/cadastrar", protect, cadastrarADM);
+// AdmRoutes.post("/cadastrar", protect, cadastrarADM);
 
-AdmRoutes.put("/:id", protect, editarADM);
+AdmRoutes.put("/:id", protect, isAdmin, editarADM);
 
-AdmRoutes.delete("/:id", protect, deletarADM);
+AdmRoutes.delete("/:id", protect, isAdmin, deletarADM);
 
 export default AdmRoutes;
