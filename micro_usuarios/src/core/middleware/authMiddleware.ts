@@ -2,7 +2,7 @@ import type { NextFunction, Request, RequestHandler, Response } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 
 
-const JWT_SECRET = 'SEGREDO_SUPER_FORTE_DO_JWT'; 
+const JWT_SECRET = process.env.JWT_SECRET || 'SEGREDO_SUPER_FORTE_DO_JWT'; 
 
 export interface CustomRequest extends Request {
   user?: {
@@ -23,6 +23,10 @@ export const protect: RequestHandler = (
   res: Response,
   next: NextFunction
 ) => {
+  const apiKey = req.headers["x-api-key"];
+
+  if (apiKey === process.env.X_API_KEY) return next();
+
   let token: string | undefined;
 
   if (
