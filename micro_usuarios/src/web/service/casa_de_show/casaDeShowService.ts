@@ -1,7 +1,6 @@
-import e from "express"; // ⚠️ Importe 'e' não é necessário e pode causar conflito, mas vou deixar.
+import { Prisma } from "@prisma/client"; // Adicionando o tipo Prisma para melhor tipagem
 import { prisma } from "../../libs/prismaClient";
 import { CasaDeShowDTO } from "../../types/casa_de_show_dtos/casaDeShowDTO";
-import { Prisma } from "@prisma/client"; // Adicionando o tipo Prisma para melhor tipagem
 
 // Tipo auxiliar para incluir o usuário, que contém o hash da senha
 type CasaShowComUsuario = Prisma.CasaShowGetPayload<{
@@ -90,11 +89,13 @@ export async function buscarCasaParaLogin(email: string): Promise<CasaShowComUsu
 // **Se você não a remover/alterar, seu Controller ajustado falhará.**
 
 
-export async function listarCasasDeShow() {
+export async function listarCasasDeShow({ offset, limit }: { offset: number; limit: number }) {
     const lista = await prisma.casaShow.findMany({
         include: {
             usuario: true,
         },
+        skip: offset,
+        take: limit,
     });
 
     // ➡️ A CORREÇÃO ESTÁ AQUI: Tipar o parâmetro 'casa' como CasaShowComUsuario

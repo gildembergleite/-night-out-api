@@ -1,6 +1,6 @@
+import { Prisma } from "@prisma/client";
 import { prisma } from "../../libs/prismaClient";
 import { ArtistaDTO } from "../../types/artista_dtos/artistaDTO";
-import { Prisma } from "@prisma/client";  
 
  
 type ArtistaComUsuario = Prisma.ArtistaGetPayload<{
@@ -72,11 +72,13 @@ export async function buscarArtistaParaLogin(email: string): Promise<ArtistaComU
 }
 
 
-export async function listarArtistas() {
+export async function listarArtistas({ offset, limit }: { offset: number; limit: number }) {
     const lista = await prisma.artista.findMany({
         include: {
             usuario: true,
         },
+        skip: offset,
+        take: limit,
     });
 
    

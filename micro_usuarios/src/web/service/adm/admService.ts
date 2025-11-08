@@ -1,6 +1,6 @@
+import { Prisma } from "@prisma/client";
 import { prisma } from "../../libs/prismaClient";
 import { AdministradorDTO } from "../../types/administrador_dtos/administradorDTO";
-import { Prisma } from "@prisma/client";
 
 type AdministradorComUsuario = Prisma.AdministradorGetPayload<{
   include: { usuario: true };
@@ -53,9 +53,11 @@ export async function buscarAdministradorParaLogin(email: string): Promise<Admin
   return administrador;
 }
 
-export async function listarAdministradores() {
+export async function listarAdministradores({ offset, limit }: { offset: number; limit: number }) {
   const lista = await prisma.administrador.findMany({
     include: { usuario: true },
+    skip: offset,
+    take: limit,
   });
 
   return lista.map((admin: AdministradorComUsuario) => ({

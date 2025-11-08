@@ -72,9 +72,11 @@ export async function cadastro(dados: {
 
 
 // 3. FUNÇÃO DE LISTAR CLIENTES
-export async function listarClientes() {
+export async function listarClientes({ offset, limit }: { offset: number; limit: number }) {
     const listaClientes = await prisma.cliente.findMany({
         include: { usuario: true },
+        skip: offset,
+        take: limit,
     });
     
     return listaClientes.map((cliente: ClienteComUsuario) => ({
