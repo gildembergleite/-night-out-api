@@ -10,7 +10,6 @@ export const login: RequestHandler = async (req, res) => {
     const email = String(req.body.email);
     const senha = String(req.body.senha);
 
-  
     const cliente = await clienteService.buscarClienteParaLogin(email);
 
     if (!cliente) {

@@ -1,19 +1,18 @@
 import { Router } from "express";
 import {
-  login,
-  cadastro,
-  listarArtistas,
   buscarArtistaPorId,
   cadastrarArtista,
-  editarArtista,
+  cadastro,
   deletarArtista,
+  editarArtista,
+  listarArtistas
 } from "../../controller/artista/artistaLCController";
 
 import { protect } from "../../../core/middleware/authMiddleware";
 
 const ArtistaRoutes = Router();
 
-ArtistaRoutes.post("/login", login);
+// ArtistaRoutes.post("/login", login);
 
 ArtistaRoutes.post("/cadastro", cadastro);
 

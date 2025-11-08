@@ -5,8 +5,7 @@ import {
   cadastro,
   deletarADM,
   editarADM,
-  listarAdministradores,
-  login,
+  listarAdministradores
 } from "../../controller/adm/admLCController";
 
 import { validateApiKey } from "../../../core/middleware/apiKeyMiddleware";
@@ -14,7 +13,7 @@ import { protect } from "../../../core/middleware/authMiddleware";
 
 const AdmRoutes = Router();
 
-AdmRoutes.post("/login", login);
+// AdmRoutes.post("/login", login);
 
 AdmRoutes.post("/cadastro", validateApiKey, cadastro);
 

@@ -1,18 +1,17 @@
 import { Router } from "express";
 import {
-  login,
-  cadastro,
-  listarClientes,
   buscarClientePorId,
   cadastrarCliente,
+  cadastro,
   editarCliente,
+  listarClientes
 } from "../../controller/cliente/clienteLCControllers";
 
 import { protect } from "../../../core/middleware/authMiddleware";
 
 const ClienteRoutes = Router();
 
-ClienteRoutes.post("/login", login);
+// ClienteRoutes.post("/login", login);
 
 ClienteRoutes.post("/cadastro", cadastro);
 
