@@ -1,0 +1,299 @@
+{
+	"info": {
+		"_postman_id": "night-out-relatorios-collection",
+		"name": "Microserviço de Relatórios - Night Out",
+		"description": "Coleção completa de endpoints do microserviço de relatórios",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Relatórios",
+			"item": [
+				{
+					"name": "Gerar Relatório - Eventos",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"tipo_relatorio\": \"EVENTOS\",\n  \"nome_relatorio\": \"Relatório de Eventos - Janeiro 2024\",\n  \"descricao\": \"Eventos criados em janeiro de 2024\",\n  \"parametros\": {\n    \"data_inicio\": \"2024-01-01T00:00:00Z\",\n    \"data_fim\": \"2024-01-31T23:59:59Z\",\n    \"status\": \"DISPONÍVEL\"\n  },\n  \"formato\": \"JSON\",\n  \"criado_por\": \"admin-id\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/relatorio",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"relatorio"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Gerar Relatório - Eventos (sem filtros)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"tipo_relatorio\": \"EVENTOS\",\n  \"nome_relatorio\": \"Todos os Eventos\",\n  \"parametros\": {}\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/relatorio",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"relatorio"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Gerar Relatório - Usuários",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"tipo_relatorio\": \"USUARIOS\",\n  \"nome_relatorio\": \"Relatório Completo de Usuários\",\n  \"descricao\": \"Todos os usuários do sistema\",\n  \"parametros\": {}\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/relatorio",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"relatorio"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Gerar Relatório - Usuários por Tipo",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"tipo_relatorio\": \"USUARIOS_POR_TIPO\",\n  \"nome_relatorio\": \"Distribuição de Usuários por Tipo\",\n  \"descricao\": \"Análise da distribuição de usuários\",\n  \"parametros\": {}\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/relatorio",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"relatorio"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Gerar Relatório - Propostas",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"tipo_relatorio\": \"PROPOSTAS\",\n  \"nome_relatorio\": \"Relatório de Propostas\",\n  \"descricao\": \"Todas as propostas de artistas e casas\",\n  \"parametros\": {\n    \"status\": \"ACEITA\",\n    \"data_inicio\": \"2024-01-01T00:00:00Z\",\n    \"data_fim\": \"2024-12-31T23:59:59Z\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/relatorio",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"relatorio"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Gerar Relatório - Artistas",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"tipo_relatorio\": \"ARTISTAS\",\n  \"nome_relatorio\": \"Relatório de Artistas\",\n  \"descricao\": \"Lista completa de artistas cadastrados\",\n  \"parametros\": {\n    \"verificado\": true\n  }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/relatorio",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"relatorio"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Gerar Relatório - Casas de Show",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"tipo_relatorio\": \"CASAS_SHOW\",\n  \"nome_relatorio\": \"Relatório de Casas de Show\",\n  \"descricao\": \"Todas as casas de show cadastradas\",\n  \"parametros\": {}\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/relatorio",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"relatorio"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Gerar Relatório - Eventos por Período",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"tipo_relatorio\": \"EVENTOS_POR_PERIODO\",\n  \"nome_relatorio\": \"Eventos do Último Mês\",\n  \"descricao\": \"Análise de eventos do período\",\n  \"parametros\": {\n    \"data_inicio\": \"2024-01-01T00:00:00Z\",\n    \"data_fim\": \"2024-01-31T23:59:59Z\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/relatorio",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"relatorio"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Todos os Relatórios",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/relatorio",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"relatorio"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Buscar Relatório por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/relatorio/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"relatorio",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "cole-o-id-do-relatorio-aqui",
+									"description": "ID do relatório gerado"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Exportar Relatório para Excel",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/relatorio/:id/excel",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"relatorio",
+								":id",
+								"excel"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "cole-o-id-do-relatorio-aqui",
+									"description": "ID do relatório para exportar"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3003",
+			"type": "string"
+		}
+	]
+}
+
