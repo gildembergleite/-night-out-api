@@ -1,21 +1,22 @@
 import { Router } from "express";
 import {
-  login,
-  cadastro,
-  listarAdministradores,
   buscarAdministradorPorId,
   cadastrarADM,
-  editarADM,
+  cadastro,
   deletarADM,
+  editarADM,
+  listarAdministradores,
+  login,
 } from "../../controller/adm/admLCController";
 
+import { validateApiKey } from "../../../core/middleware/apiKeyMiddleware";
 import { protect } from "../../../core/middleware/authMiddleware";
 
 const AdmRoutes = Router();
 
 AdmRoutes.post("/login", login);
 
-AdmRoutes.post("/cadastro", cadastro);
+AdmRoutes.post("/cadastro", validateApiKey, cadastro);
 
 AdmRoutes.get("/", protect, listarAdministradores);
 
