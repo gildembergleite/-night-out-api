@@ -5,14 +5,28 @@ import { prisma } from "../../libs/prismClient";
 import { RelatorioDTO } from "../../types/relatorio_dtos/relatorioDTO";
 
 export async function gerarRelatorio(dados: RelatorioDTO) {
+  const TIPO_RELATORIO = [
+    "EVENTOS",
+    "USUARIOS",
+    "PROPOSTAS",
+    "ARTISTAS",
+    "CASAS_SHOW",
+    "EVENTOS_POR_PERIODO",
+    "USUARIOS_POR_TIPO",
+  ];
+
+  if (!TIPO_RELATORIO.includes(dados.tipo_relatorio)) {
+    throw new Error(`Tipo de relatório não suportado: ${dados.tipo_relatorio}`);
+  }
+
   try {
-    // Criar registro do relatório
     const relatorio = await prisma.relatorio.create({
       data: {
         tipo_relatorio: dados.tipo_relatorio,
         nome_relatorio: dados.nome_relatorio,
         descricao: dados.descricao,
         parametros: JSON.stringify(dados.parametros),
+        dados: JSON.stringify(dados),
         status: "PROCESSANDO",
         formato: dados.formato || "JSON",
         criado_por: dados.criado_por,
@@ -21,7 +35,6 @@ export async function gerarRelatorio(dados: RelatorioDTO) {
       },
     });
 
-    // Gerar dados do relatório baseado no tipo
     let dadosRelatorio: any;
 
     switch (dados.tipo_relatorio) {
@@ -50,7 +63,6 @@ export async function gerarRelatorio(dados: RelatorioDTO) {
         throw new Error(`Tipo de relatório não suportado: ${dados.tipo_relatorio}`);
     }
 
-    // Atualizar relatório com os dados gerados
     const relatorioAtualizado = await prisma.relatorio.update({
       where: { id_relatorio: relatorio.id_relatorio },
       data: {
@@ -65,7 +77,6 @@ export async function gerarRelatorio(dados: RelatorioDTO) {
       dados: dadosRelatorio,
     };
   } catch (error: any) {
-    // Atualizar status para erro se o relatório foi criado
     if (error.message && error.message.includes("Tipo de relatório")) {
       throw error;
     }
@@ -92,7 +103,6 @@ async function gerarRelatorioEventos(parametros: any) {
     const response = await eventosClient.get("/evento");
     let eventos = response.data;
 
-    // Filtros
     if (parametros.data_inicio) {
       eventos = eventos.filter((e: any) => 
         new Date(e.data_inicio) >= new Date(parametros.data_inicio)
@@ -110,12 +120,10 @@ async function gerarRelatorioEventos(parametros: any) {
       eventos = eventos.filter((e: any) => e.id_usuario === parametros.id_usuario);
     }
 
-    // Enriquecer com dados de usuários (tentando diferentes tipos)
     const eventosEnriquecidos = await Promise.all(
       eventos.map(async (evento: any) => {
         let usuario = null;
         
-        // Tentar buscar em diferentes endpoints
         const endpoints = [
           `/cliente/${evento.id_usuario}`,
           `/artista/${evento.id_usuario}`,
@@ -130,7 +138,6 @@ async function gerarRelatorioEventos(parametros: any) {
               break;
             }
           } catch {
-            // Continuar tentando outros endpoints
           }
         }
         
@@ -155,22 +162,52 @@ async function gerarRelatorioEventos(parametros: any) {
 
 async function gerarRelatorioUsuarios(parametros: any) {
   try {
-    const tipos = ["cliente", "artista", "casaDeShow", "adm"];
     const usuarios: any[] = [];
 
-    for (const tipo of tipos) {
-      try {
-        const response = await usuariosClient.get(`/${tipo}`).catch(() => null);
-        if (response?.data && Array.isArray(response.data)) {
-          usuarios.push(...response.data.map((u: any) => ({ ...u, tipo_usuario: tipo })));
-        }
-      } catch (error) {
-        // Ignorar erros de tipos que não existem ou problemas de autenticação
-        console.warn(`Não foi possível buscar ${tipo}:`, error);
+    try {
+      const response = await usuariosClient.get("/cliente", {
+        params: { page: 1, pageSize: 10000 }
+      }).catch(() => null);
+      if (response?.data && Array.isArray(response.data)) {
+        usuarios.push(...response.data.map((u: any) => ({ ...u, tipo_usuario: "cliente" })));
       }
+    } catch (error) {
+      console.warn("Não foi possível buscar clientes:", error);
     }
 
-    // Filtros
+    try {
+      const response = await usuariosClient.get("/artista", {
+        params: { page: 1, pageSize: 10000 }
+      }).catch(() => null);
+      if (response?.data && Array.isArray(response.data)) {
+        usuarios.push(...response.data.map((u: any) => ({ ...u, tipo_usuario: "artista" })));
+      }
+    } catch (error) {
+      console.warn("Não foi possível buscar artistas:", error);
+    }
+
+    try {
+      const response = await usuariosClient.get("/casaDeShow", {
+        params: { page: 1, pageSize: 10000 }
+      }).catch(() => null);
+      if (response?.data && Array.isArray(response.data)) {
+        usuarios.push(...response.data.map((u: any) => ({ ...u, tipo_usuario: "casaDeShow" })));
+      }
+    } catch (error) {
+      console.warn("Não foi possível buscar casas de show:", error);
+    }
+
+    try {
+      const response = await usuariosClient.get("/adm", {
+        params: { page: 1, pageSize: 10000 }
+      }).catch(() => null);
+      if (response?.data && Array.isArray(response.data)) {
+        usuarios.push(...response.data.map((u: any) => ({ ...u, tipo_usuario: "adm" })));
+      }
+    } catch (error) {
+      console.warn("Não foi possível buscar administradores:", error);
+    }
+
     let usuariosFiltrados = usuarios;
     if (parametros.tipo_usuario) {
       usuariosFiltrados = usuariosFiltrados.filter((u: any) => 
@@ -202,7 +239,6 @@ async function gerarRelatorioPropostas(parametros: any) {
       ...(propostasCasa.data || []).map((p: any) => ({ ...p, tipo: "CASA" })),
     ];
 
-    // Filtros
     if (parametros.status) {
       propostas = propostas.filter((p: any) => p.status === parametros.status);
     }
@@ -232,12 +268,26 @@ async function gerarRelatorioPropostas(parametros: any) {
 
 async function gerarRelatorioArtistas(parametros: any) {
   try {
-    const response = await usuariosClient.get("/artista").catch(() => ({ data: [] }));
+    const response = await usuariosClient.get("/artista", {
+      params: { page: 1, pageSize: 10000 }
+    }).catch(() => ({ data: [] }));
+    
     let artistas = response.data || [];
 
-    // Filtros
     if (parametros.verificado !== undefined) {
-      artistas = artistas.filter((a: any) => a.verificado === parametros.verificado);
+      const artistasCompletos = await Promise.all(
+        artistas.map(async (a: any) => {
+          try {
+            const detalhes = await usuariosClient.get(`/artista/${a.id}`).catch(() => null);
+            return detalhes?.data || a;
+          } catch {
+            return a;
+          }
+        })
+      );
+      artistas = artistasCompletos.filter((a: any) => 
+        a.verificado === parametros.verificado
+      );
     }
 
     return {
@@ -255,14 +305,41 @@ async function gerarRelatorioArtistas(parametros: any) {
 
 async function gerarRelatorioCasasShow(parametros: any) {
   try {
-    const response = await usuariosClient.get("/casaDeShow").catch(() => ({ data: [] }));
-    const casas = response.data || [];
+    const response = await usuariosClient.get("/casaDeShow", {
+      params: { page: 1, pageSize: 10000 }
+    }).catch(() => ({ data: [] }));
+    
+    let casas = response.data || [];
+
+    const casasCompletas = await Promise.all(
+      casas.map(async (c: any) => {
+        try {
+          const detalhes = await usuariosClient.get(`/casaDeShow/${c.id}`).catch(() => null);
+          return detalhes?.data || c;
+        } catch {
+          return c;
+        }
+      })
+    );
+
+    const casasFormatadas = casasCompletas
+      .filter((c: any) => c !== null)
+      .map((c: any) => ({
+        id: c.id || c.id_usuario,
+        nome: c.nome || c.usuario?.nome,
+        email: c.email || c.usuario?.email,
+        nome_fantasia: c.nome_fantasia,
+        cnpj: c.cnpj,
+        capacidade: c.capacidade,
+        endereco: c.endereco,
+        estado: c.estado,
+      }));
 
     return {
-      total: casas.length,
-      casas,
+      total: casasFormatadas.length,
+      casas: casasFormatadas,
       resumo: {
-        por_estado: contarPorStatus(casas, "estado"),
+        por_estado: contarPorStatus(casasFormatadas, "estado"),
       },
     };
   } catch (error: any) {
@@ -353,17 +430,14 @@ export async function exportarRelatorioParaExcel(id: string) {
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet(relatorio.nome_relatorio);
 
-  // Adicionar cabeçalho com informações do relatório
   worksheet.addRow(["Relatório:", relatorio.nome_relatorio]);
   worksheet.addRow(["Tipo:", relatorio.tipo_relatorio]);
   worksheet.addRow(["Data de Criação:", relatorio.createdAt.toLocaleString("pt-BR")]);
   worksheet.addRow([]);
 
-  // Processar dados baseado no tipo
   const dados = relatorio.dados;
 
   if (dados.eventos) {
-    // Relatório de eventos
     worksheet.addRow(["ID Evento", "Título", "Data Início", "Data Fim", "Local", "Status", "Usuário"]);
     dados.eventos.forEach((evento: any) => {
       worksheet.addRow([
@@ -377,7 +451,6 @@ export async function exportarRelatorioParaExcel(id: string) {
       ]);
     });
   } else if (dados.usuarios) {
-    // Relatório de usuários
     worksheet.addRow(["ID Usuário", "Nome", "Email", "Tipo", "Telefone"]);
     dados.usuarios.forEach((usuario: any) => {
       worksheet.addRow([
@@ -389,7 +462,6 @@ export async function exportarRelatorioParaExcel(id: string) {
       ]);
     });
   } else if (dados.propostas) {
-    // Relatório de propostas
     worksheet.addRow(["ID Proposta", "Tipo", "Data Proposta", "Data Evento", "Valor Ofertado", "Status"]);
     dados.propostas.forEach((proposta: any) => {
       worksheet.addRow([
@@ -402,7 +474,6 @@ export async function exportarRelatorioParaExcel(id: string) {
       ]);
     });
   } else if (dados.artistas) {
-    // Relatório de artistas
     worksheet.addRow(["ID Artista", "Nome Artista", "Gênero Musical", "Cache Mínimo", "Verificado"]);
     dados.artistas.forEach((artista: any) => {
       worksheet.addRow([
@@ -414,7 +485,6 @@ export async function exportarRelatorioParaExcel(id: string) {
       ]);
     });
   } else if (dados.casas) {
-    // Relatório de casas de show
     worksheet.addRow(["ID Casa", "Nome Fantasia", "CNPJ", "Capacidade", "Endereço", "Estado"]);
     dados.casas.forEach((casa: any) => {
       worksheet.addRow([
@@ -428,7 +498,6 @@ export async function exportarRelatorioParaExcel(id: string) {
     });
   }
 
-  // Adicionar resumo se existir
   if (dados.resumo) {
     worksheet.addRow([]);
     worksheet.addRow(["Resumo"]);
@@ -444,7 +513,6 @@ export async function exportarRelatorioParaExcel(id: string) {
     });
   }
 
-  // Estilizar cabeçalho
   const headerRow = worksheet.getRow(5);
   if (headerRow) {
     headerRow.font = { bold: true };
