@@ -25,7 +25,7 @@ export const listarEvento: RequestHandler = async (req, res) => {
         });
         res.status(200).json(lista);
     } catch (e) {
-        res.status(500).json({message: `Erro ao listar ingressos: ${e}`})
+        res.status(500).json({message: `Erro ao listar eventos: ${e}`})
     }
 };
 
