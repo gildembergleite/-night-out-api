@@ -34,7 +34,7 @@ export const listarPropostaCasa: RequestHandler = async (req, res) => {
 
 export const buscarPropostaCasaPorId: RequestHandler = async (req, res) => {
     try {
-        const {id} = req.body;
+        const {id} = req.params;
         const propostaCasa = await propostaCasaService.buscarPropostaCasa(id);
 
         if(!propostaCasa) {
@@ -50,7 +50,7 @@ export const buscarPropostaCasaPorId: RequestHandler = async (req, res) => {
 
 export const editarPropostaCasa: RequestHandler = async (req, res) => {
     try {
-        const {id} = req.body;
+        const {id} = req.params;
         const dados: Partial<PropostaCasaDTO> = req.body;
 
         const propostaCasaAtualizado = await propostaCasaService.atualizarPropostaCasa(id, dados);

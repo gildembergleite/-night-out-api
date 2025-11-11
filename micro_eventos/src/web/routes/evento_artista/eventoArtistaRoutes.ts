@@ -10,7 +10,7 @@ const EventoArtistaRoutes = Router();
 
 EventoArtistaRoutes.post("/", criarEventoArtista);
 EventoArtistaRoutes.get("/", listarEventoArtista);
-EventoArtistaRoutes.get("/:id", buscarEventoArtistaPorId);
-EventoArtistaRoutes.put("/:id", editarEventoArtista);
+EventoArtistaRoutes.get("/:id_evento/:id_usuario", buscarEventoArtistaPorId);
+EventoArtistaRoutes.put("/:id_evento/:id_usuario", editarEventoArtista);
 
 export default EventoArtistaRoutes;
