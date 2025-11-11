@@ -1,8 +1,8 @@
-import { Prisma } from "../../../core/generated/prisma"; // Adicionando o tipo Prisma para melhor tipagem
+import { Prisma } from "../../../core/generated/prisma";
 import { prisma } from "../../libs/prismaClient";
 import { CasaDeShowDTO } from "../../types/casa_de_show_dtos/casaDeShowDTO";
 
-// Tipo auxiliar para incluir o usuário, que contém o hash da senha
+
 type CasaShowComUsuario = Prisma.CasaShowGetPayload<{
     include: { usuario: true };
 }>;
@@ -63,30 +63,25 @@ export async function cadastro(dados: {
     }
 }
 
-// ⚠️ FUNÇÃO AJUSTADA PARA SEGURANÇA:
-// Renomeada para buscarCasaParaLogin e removemos o filtro de senha do DB.
+
 export async function buscarCasaParaLogin(email: string): Promise<CasaShowComUsuario | null> {
     const casa = await prisma.casaShow.findFirst({
         where: {
             usuario: {
                 email,
-                // ❌ REMOVIDO: senha_hash: senha,
+
                 tipo: "CASASHOW",
             },
         },
         include: {
-            usuario: true, // Garante que o hash da senha virá para o Controller
+            usuario: true,
         },
     });
 
     return casa;
 }
 
-// ⚠️ REMOÇÃO DA FUNÇÃO ORIGINAL 'login'
-// A função 'login' original deve ser removida ou ter seu nome alterado, 
-// pois ela será substituída pela lógica de bcrypt e JWT no Controller.
-// O corpo que estava aqui agora é a função buscarCasaParaLogin.
-// **Se você não a remover/alterar, seu Controller ajustado falhará.**
+
 
 
 export async function listarCasasDeShow({ offset, limit }: { offset: number; limit: number }) {
@@ -98,12 +93,12 @@ export async function listarCasasDeShow({ offset, limit }: { offset: number; lim
         take: limit,
     });
 
-    // ➡️ A CORREÇÃO ESTÁ AQUI: Tipar o parâmetro 'casa' como CasaShowComUsuario
+
     return lista.map((casa: CasaShowComUsuario) => ({
         id: casa.id_usuario,
         nome: casa.usuario.nome,
         endereco: casa.endereco,
-        // Adicionando mais campos úteis para listagem
+
         nome_fantasia: casa.nome_fantasia,
     }));
 }

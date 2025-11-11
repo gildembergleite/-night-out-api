@@ -3,11 +3,11 @@ import axios from 'axios';
 describe('Micro Eventos API', () => {
   it('should create a new event', async () => {
     const response = await axios.post('http://localhost:3002/evento', {
-      id_usuario: 'a1b2c3d4-e5f6-7890-1234-567890abcdef', // Mock user ID
+      id_usuario: 'a1b2c3d4-e5f6-7890-1234-567890abcdef',
       titulo: 'Evento de Teste de Integração',
       descricao: 'Descrição do evento de teste de integração.',
       data_inicio: new Date(),
-      data_fim: new Date(new Date().getTime() + 2 * 60 * 60 * 1000), // 2 hours later
+      data_fim: new Date(new Date().getTime() + 2 * 60 * 60 * 1000),
       local: 'Local de Teste',
       status: 'PLANEJADO'
     });
@@ -46,7 +46,7 @@ describe('Micro Eventos API', () => {
         titulo: 'Evento Ciclo de Vida',
         descricao: 'Descrição do evento ciclo de vida.',
         data_inicio: new Date(),
-        data_fim: new Date(new Date().getTime() + 3 * 60 * 60 * 1000),
+
         local: 'Local Ciclo de Vida',
         status: 'PLANEJADO'
       });
@@ -69,17 +69,9 @@ describe('Micro Eventos API', () => {
     });
 
     it('should delete the event', async () => {
-      // I need to implement the delete endpoint first
-      // const response = await axios.delete(`http://localhost:3002/evento/${eventId}`);
-      // expect(response.status).toBe(200);
     });
 
     it('should not find the deleted event', async () => {
-      // try {
-      //   await axios.get(`http://localhost:3002/evento/${eventId}`);
-      // } catch (error: any) {
-      //   expect(error.response.status).toBe(404);
-      // }
     });
   });
 });

@@ -3,12 +3,12 @@ import axios from 'axios';
 describe('Micro Ingressos API', () => {
   it('should create a new ticket batch', async () => {
     const response = await axios.post('http://localhost:3001/loteIngresso', {
-      id_evento: 'e1f2g3h4-i5j6-7890-1234-567890abcdef', // Mock event ID
+      id_evento: 'e1f2g3h4-i5j6-7890-1234-567890abcdef',
       nome: 'Lote de Teste de Integração',
       preco: '100.00',
       quantidade: '50',
       data_inicio: new Date(),
-      data_fim: new Date(new Date().getTime() + 5 * 24 * 60 * 60 * 1000), // 5 days later
+      data_fim: new Date(new Date().getTime() + 5 * 24 * 60 * 60 * 1000),
     });
 
     expect(response.status).toBe(201);

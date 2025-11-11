@@ -12,7 +12,7 @@ import { protect } from "../../../core/middleware/authMiddleware";
 
 const ClienteRoutes = Router();
 
-// ClienteRoutes.post("/login", login);
+
 
 ClienteRoutes.post("/cadastro", cadastro);
 

@@ -100,7 +100,7 @@ export const cadastro: RequestHandler = async (req, res) => {
   }
 };
 
-// --- FUNÇÕES DE CRUD ---
+
 
 export const listarCasasDeShow: RequestHandler = async (req, res) => {
   try {

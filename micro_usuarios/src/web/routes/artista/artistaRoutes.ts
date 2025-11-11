@@ -12,7 +12,7 @@ import { protect } from "../../../core/middleware/authMiddleware";
 
 const ArtistaRoutes = Router();
 
-// ArtistaRoutes.post("/login", login);
+
 
 ArtistaRoutes.post("/cadastro", cadastro);
 

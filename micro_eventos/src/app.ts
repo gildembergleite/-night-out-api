@@ -26,5 +26,5 @@ app.use("/propostaCasa", propostaCasaRoutes);
 const PORT = process.env.PORT || 3002;
 
 app.listen(PORT, () => {
-  console.log(`🎤 Microserviço de Eventos rodando na porta ${PORT}`);
+  console.log(`Microserviço de Eventos rodando na porta ${PORT}`);
 });

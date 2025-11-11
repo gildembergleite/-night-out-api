@@ -12,7 +12,7 @@ import { protect } from "../../../core/middleware/authMiddleware";
 
 const CasaRoutes = Router();
 
-// CasaRoutes.post("/login", login);
+
 
 CasaRoutes.post("/cadastro", cadastro);
 

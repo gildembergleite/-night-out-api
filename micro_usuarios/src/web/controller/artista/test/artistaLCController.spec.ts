@@ -89,7 +89,7 @@ describe("Buscar Artista por ID", () => {
       cache_min: "1500.00",
       descricao:
         "Cantor sertanejo com mais de 5 anos de experiência em shows ao vivo.",
-      portifolio: "https://soundcloud.com/joaosilva",
+  portifolio: "https://soundcloud.com/joaosilva",
       verificado: false,
       createdAt: new Date("2025-10-24T01:05:39.304Z"),
       updatedAt: new Date("2025-10-24T01:05:39.304Z"),
@@ -169,7 +169,7 @@ describe("Cadastrar Artista", () => {
         cache_min: 1500.0,
         descricao:
           "Cantor sertanejo com repertório variado e experiência em eventos corporativos e festas.",
-        portifolio: "https://www.instagram.com/joaosilvaoficial",
+  portifolio: "https://www.instagram.com/joaosilvaoficial",
         usuario: [
           {
             nome: "João Silva",
@@ -199,7 +199,7 @@ describe("Cadastrar Artista", () => {
       cache_min: "1500.0",
       descricao:
         "Cantor sertanejo com repertório variado e experiência em eventos corporativos e festas.",
-      portifolio: "https://www.instagram.com/joaosilvaoficial",
+  portifolio: "https://www.instagram.com/joaosilvaoficial",
       verificado: false,
       createdAt: new Date("2025-10-19T21:13:42.568Z"),
       updatedAt: new Date("2025-10-19T21:13:42.568Z"),
@@ -268,7 +268,7 @@ describe("editar Artista", () => {
         cache_min: 1500.0,
         descricao:
           "Cantor sertanejo com repertório variado e experiência em eventos corporativos e festas.",
-        portifolio: "https://www.instagram.com/joaosilvaoficial",
+  portifolio: "https://www.instagram.com/joaosilvaoficial",
         usuario: [
           {
             nome: "João Silva",
@@ -297,7 +297,7 @@ describe("editar Artista", () => {
       cache_min: "1500.0",
       descricao:
         "Cantor sertanejo com repertório variado e experiência em eventos corporativos e festas.",
-      portifolio: "https://www.instagram.com/joaosilvaoficial",
+  portifolio: "https://www.instagram.com/joaosilvaoficial",
       verificado: false,
       createdAt: new Date("2025-10-19T21:13:42.568Z"),
       updatedAt: new Date("2025-10-19T21:13:42.568Z"),
@@ -392,7 +392,7 @@ describe("deletar Artista", () => {
       genero_musical: "Sertanejo",
       id_usuario: "88bfb4c9-30b1-4e21-ad63-143541e72f4b",
       nome_artista: "João Silva",
-      portifolio: "https://soundcloud.com/joaosilva",
+  portifolio: "https://soundcloud.com/joaosilva",
       updatedAt: new Date("2025-10-24T15:06:58.177Z"),
       verificado: false,
     };

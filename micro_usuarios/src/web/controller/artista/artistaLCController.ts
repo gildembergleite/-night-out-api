@@ -92,7 +92,7 @@ export const cadastro: RequestHandler = async (req, res) => {
   }
 };
 
-// --- FUNÇÕES DE CRUD (Sem alteração na lógica) ---
+
 export const listarArtistas: RequestHandler = async (req, res) => {
   try {
     const { page = 1, pageSize = 10 } = req.query;

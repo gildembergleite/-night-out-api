@@ -1,14 +1,13 @@
 import { Prisma } from "../../../core/generated/prisma";
 import { prisma } from "../../libs/prismaClient";
-import { ClienteDTO } from "../../types/cliente_dtos/clienteDTO"; // Import Mantido
+import { ClienteDTO } from "../../types/cliente_dtos/clienteDTO";
 
-// Definição de tipo para o payload que inclui a relação com Usuario (para reuso)
+
 type ClienteComUsuario = Prisma.ClienteGetPayload<{
     include: { usuario: true };
 }>;
 
-// 1. FUNÇÃO DE LOGIN
-// Esta função é chamada pelo Controller para buscar o cliente e o hash da senha.
+
 export async function buscarClienteParaLogin(email: string): Promise<ClienteComUsuario | null> {
     const cliente = await prisma.cliente.findFirst({
         where: {
@@ -30,13 +29,13 @@ export async function buscarClienteParaLogin(email: string): Promise<ClienteComU
 export async function cadastro(dados: {
     nome: string;
     email: string;
-    senha: string; // Este campo é agora o 'senha_hash'
+    senha: string;
     telefone?: string;
     apelido?: string;
     preferencias?: string;
     data_nascimento?: Date;
 }): Promise<any> {
-    // ⚠️ A senha (dados.senha) DEVE ser o hash gerado pelo Controller.
+
     const novoCliente = await prisma.cliente.create({
         data: {
             apelido: dados.apelido,
@@ -57,7 +56,7 @@ export async function cadastro(dados: {
         },
     });
 
-    // Retorno DTO simplificado
+
     return {
         id: novoCliente.id_usuario,
         nome: novoCliente.usuario.nome,
@@ -71,7 +70,7 @@ export async function cadastro(dados: {
 }
 
 
-// 3. FUNÇÃO DE LISTAR CLIENTES
+
 export async function listarClientes({ offset, limit }: { offset: number; limit: number }) {
     const listaClientes = await prisma.cliente.findMany({
         include: { usuario: true },
@@ -90,7 +89,7 @@ export async function listarClientes({ offset, limit }: { offset: number; limit:
     }));
 }
 
-// 4. FUNÇÃO DE BUSCAR POR ID
+
 export async function buscarClientePorId(id: string): Promise<ClienteComUsuario | null> {
     
     const cliente = await prisma.cliente.findUnique({
@@ -101,8 +100,7 @@ export async function buscarClientePorId(id: string): Promise<ClienteComUsuario 
     return cliente;
 }
 
-// 5. FUNÇÃO DE CADASTRAR CLIENTE (Rota secundária)
-// ⚠️ Se esta rota for usada, o Controller precisa garantir que o campo 'senha_hash' já vem hasheado no DTO.
+
 export async function cadastrarCliente(clienteDTO: ClienteDTO) {
     
     const novoCliente = await prisma.cliente.create({
@@ -126,13 +124,13 @@ export async function cadastrarCliente(clienteDTO: ClienteDTO) {
     return novoCliente;
 }
 
-// 6. FUNÇÃO DE EDITAR CLIENTE
+
 export async function editarCliente(
     id_cliente: string,
     clienteDTO: Partial<ClienteDTO>
 ): Promise<ClienteComUsuario> {
     try {
-        // Permite updates parciais — só atualiza partes que vieram no DTO
+
         const clienteAtualizado = await prisma.cliente.update({
             where: { id_usuario: id_cliente },
             data: {

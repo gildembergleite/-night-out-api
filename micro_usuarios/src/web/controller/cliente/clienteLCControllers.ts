@@ -149,7 +149,7 @@ export const deletarCliente: RequestHandler = async (req, res) => {
   try {
     const { id } = req.params;
     await clienteService.deletarCliente(id);
-    // 204 No Content quando deletado com sucesso
+
     res.status(204).send();
   } catch (e) {
     res.status(500).json({ message: `Erro ao deletar cliente: ${e}` });

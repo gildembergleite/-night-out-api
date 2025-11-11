@@ -20,6 +20,6 @@ app.use("/relatorio", relatorioRoutes);
 const PORT = process.env.PORT || 3003;
 
 app.listen(PORT, () => {
-  console.log(`📊 Microserviço de Relatórios rodando na porta ${PORT}`);
+  console.log(`Microserviço de Relatórios rodando na porta ${PORT}`);
 });
 
