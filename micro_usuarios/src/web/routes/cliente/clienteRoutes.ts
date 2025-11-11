@@ -4,6 +4,7 @@ import {
   cadastrarCliente,
   cadastro,
   editarCliente,
+  deletarCliente,
   listarClientes
 } from "../../controller/cliente/clienteLCControllers";
 
@@ -22,5 +23,7 @@ ClienteRoutes.get("/:id", protect, buscarClientePorId);
 ClienteRoutes.post("/cadastrar", protect, cadastrarCliente);
 
 ClienteRoutes.put("/:id", protect, editarCliente);
+
+ClienteRoutes.delete("/:id", protect, deletarCliente);
 
 export default ClienteRoutes;

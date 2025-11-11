@@ -129,27 +129,42 @@ export async function cadastrarCliente(clienteDTO: ClienteDTO) {
 // 6. FUNÇÃO DE EDITAR CLIENTE
 export async function editarCliente(
     id_cliente: string,
-    clienteDTO: ClienteDTO
+    clienteDTO: Partial<ClienteDTO>
 ): Promise<ClienteComUsuario> {
-    
-    // ⚠️ Se o campo 'senha_hash' vier preenchido, ele deve vir JÁ HASHADO do Controller.
-    const clienteAtualizado = await prisma.cliente.update({
-        where: { id_usuario: id_cliente },
-        data: {
-            apelido: clienteDTO.apelido,
-            preferencias: clienteDTO.preferencias,
-            data_nascimento: clienteDTO.data_nascimento,
-            usuario: {
-                update: {
-                    nome: clienteDTO.usuario[0].nome,
-                    email: clienteDTO.usuario[0].email,
-                    senha_hash: clienteDTO.usuario[0].senha_hash,
-                    telefone: clienteDTO.usuario[0].telefone,
-                },
+    try {
+        // Permite updates parciais — só atualiza partes que vieram no DTO
+        const clienteAtualizado = await prisma.cliente.update({
+            where: { id_usuario: id_cliente },
+            data: {
+                apelido: clienteDTO.apelido ?? undefined,
+                preferencias: clienteDTO.preferencias ?? undefined,
+                data_nascimento: clienteDTO.data_nascimento ?? undefined,
+                usuario: clienteDTO.usuario
+                    ? {
+                          update: {
+                              nome: clienteDTO.usuario[0]?.nome ?? undefined,
+                              email: clienteDTO.usuario[0]?.email ?? undefined,
+                              senha_hash: clienteDTO.usuario[0]?.senha_hash ?? undefined,
+                              telefone: clienteDTO.usuario[0]?.telefone ?? undefined,
+                          },
+                      }
+                    : undefined,
             },
-        },
-        include: { usuario: true },
-    });
+            include: { usuario: true },
+        });
 
-    return clienteAtualizado;
+        return clienteAtualizado;
+    } catch (error) {
+        throw new Error("Erro ao editar cliente: " + error);
+    }
+}
+
+export async function deletarCliente(id_cliente: string) {
+    if (!id_cliente) {
+        throw new Error("ID do cliente é obrigatório para deletar.");
+    }
+
+    return await prisma.cliente.delete({
+        where: { id_usuario: id_cliente },
+    });
 }
