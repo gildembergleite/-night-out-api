@@ -1,12 +1,13 @@
-import { Administrador } from "@prisma/client";
+
+import { Administrador } from "../../../core/generated/prisma";
 import { AdministradorDTO } from "../../types/administrador_dtos/administradorDTO";
 
 export async function toForm(
-  artistaDTO: Administrador
+  administradorData: Administrador
 ): Promise<Partial<AdministradorDTO>> {
   return {
-    cargo: artistaDTO.cargo,
-    permissao_nivel: artistaDTO.permissao_nivel,
+    cargo: administradorData.cargo,
+    permissao_nivel: administradorData.permissao_nivel,
     usuario: [],
   };
 }

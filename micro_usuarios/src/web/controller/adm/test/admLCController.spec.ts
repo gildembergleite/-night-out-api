@@ -2,7 +2,7 @@ import { listarAdministradores } from "../admLCController";
 import * as admService from "../../../service/adm/admService";
 import { Request, Response, NextFunction } from "express";
 import * as admController from "../../../controller/adm/admLCController";
-import { UsuarioTipo } from "@prisma/client";
+import { UsuarioTipo } from "../../../../core/generated/prisma";
 
 describe("Listar Administradores", () => {
   let mockRequest: Partial<Request>;
@@ -24,8 +24,8 @@ describe("Listar Administradores", () => {
 
   test("deve retornar a lista de administradores com status 200", async () => {
     const mockLista = [
-      { id: "1", nome: "Carlos", email: "carlos@teste.com" },
-      { id: "2", nome: "Diego", email: "diego@teste.com" },
+      { id: "1", nome: "Carlos", email: "carlos@teste.com", cargo: "Admin", permissao_nivel: "TOTAL" },
+      { id: "2", nome: "Diego", email: "diego@teste.com", cargo: "Moderador", permissao_nivel: "LEITURA" },
     ];
 
     jest

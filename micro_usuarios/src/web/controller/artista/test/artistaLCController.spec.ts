@@ -2,7 +2,7 @@ import { listarArtistas } from "./../artistaLCController";
 import * as artistaService from "../../../service/artista/artistaService";
 import e, { Request, Response, NextFunction } from "express";
 import * as artistaLCController from "../../../controller/artista/artistaLCController";
-import { UsuarioTipo } from "@prisma/client";
+import { UsuarioTipo } from "../../../../core/generated/prisma";
 import { partialUtil } from "zod/v3/helpers/partialUtil.cjs";
 import { json } from "stream/consumers";
 
@@ -27,8 +27,8 @@ describe("listar Artistas", () => {
 
   test("Deve listar artistas com sucesso e retornar status 200", async () => {
     const mockLista = [
-      { id: "1", nome: "Artista 1", email: "artista@email.com" },
-      { id: "2", nome: "Artista 2", email: "artista2@email.com" },
+      { id: "1", nome: "Artista 1", email: "artista@email.com", nome_artista: "Artista Um", genero_musical: "Rock" },
+      { id: "2", nome: "Artista 2", email: "artista2@email.com", nome_artista: "Artista Dois", genero_musical: "Pop" },
     ];
 
     jest.spyOn(artistaService, "listarArtistas").mockResolvedValue(mockLista);

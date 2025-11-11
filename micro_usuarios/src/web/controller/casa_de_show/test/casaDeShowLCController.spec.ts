@@ -1,7 +1,7 @@
 import * as casaDeShowService from "../../../service/casa_de_show/casaDeShowService";
 import  { Request, Response, NextFunction } from "express";
 import * as casaDeShowController from "../../../controller/casa_de_show/casaDeShowLCController";
-import { UsuarioTipo } from "@prisma/client";
+import { UsuarioTipo } from "../../../../core/generated/prisma";
 
 describe("listarCasasDeShow", () => {
   let mockRequest: Partial<Request>;
@@ -23,8 +23,8 @@ describe("listarCasasDeShow", () => {
 
   test("deve listar casas de show com sucesso", async () => {
     const listaMock = [
-      { id: "1", nome: "Casa A", endereco: "Endereço A" },
-      { id: "2", nome: "Casa B", endereco: "Endereço B" },
+      { id: "1", nome: "Casa A", endereco: "Endereço A", nome_fantasia: "A Show" },
+      { id: "2", nome: "Casa B", endereco: "Endereço B", nome_fantasia: "B Show" },
     ];
 
     jest

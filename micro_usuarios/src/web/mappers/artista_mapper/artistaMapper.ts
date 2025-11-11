@@ -1,5 +1,5 @@
 import { ArtistaDTO } from "../../types/artista_dtos/artistaDTO";
-import { Artista } from "@prisma/client";
+import { Artista } from "../../../core/generated/prisma";
 export async function toForm(artista: Artista): Promise<Partial<ArtistaDTO>> {
   return {
     nome_artista: artista.nome_artista,

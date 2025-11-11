@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client"; // Adicionando o tipo Prisma para melhor tipagem
+import { Prisma } from "../../../core/generated/prisma"; // Adicionando o tipo Prisma para melhor tipagem
 import { prisma } from "../../libs/prismaClient";
 import { CasaDeShowDTO } from "../../types/casa_de_show_dtos/casaDeShowDTO";
 

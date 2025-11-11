@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { Prisma } from "../../../core/generated/prisma";
 import { prisma } from "../../libs/prismaClient";
 import { AdministradorDTO } from "../../types/administrador_dtos/administradorDTO";
 

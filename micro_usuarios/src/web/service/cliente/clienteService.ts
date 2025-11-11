@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { Prisma } from "../../../core/generated/prisma";
 import { prisma } from "../../libs/prismaClient";
 import { ClienteDTO } from "../../types/cliente_dtos/clienteDTO"; // Import Mantido
 
