@@ -30,8 +30,12 @@ export async function gerarRelatorio(dados: RelatorioDTO) {
         status: "PROCESSANDO",
         formato: dados.formato || "JSON",
         criado_por: dados.criado_por,
-        data_inicio: dados.parametros.data_inicio ? new Date(dados.parametros.data_inicio) : null,
-        data_fim: dados.parametros.data_fim ? new Date(dados.parametros.data_fim) : null,
+        data_inicio: dados.parametros.data_inicio
+          ? new Date(dados.parametros.data_inicio)
+          : null,
+        data_fim: dados.parametros.data_fim
+          ? new Date(dados.parametros.data_fim)
+          : null,
       },
     });
 
@@ -54,13 +58,17 @@ export async function gerarRelatorio(dados: RelatorioDTO) {
         dadosRelatorio = await gerarRelatorioCasasShow(dados.parametros);
         break;
       case "EVENTOS_POR_PERIODO":
-        dadosRelatorio = await gerarRelatorioEventosPorPeriodo(dados.parametros);
+        dadosRelatorio = await gerarRelatorioEventosPorPeriodo(
+          dados.parametros
+        );
         break;
       case "USUARIOS_POR_TIPO":
         dadosRelatorio = await gerarRelatorioUsuariosPorTipo(dados.parametros);
         break;
       default:
-        throw new Error(`Tipo de relatório não suportado: ${dados.tipo_relatorio}`);
+        throw new Error(
+          `Tipo de relatório não suportado: ${dados.tipo_relatorio}`
+        );
     }
 
     const relatorioAtualizado = await prisma.relatorio.update({
@@ -80,7 +88,7 @@ export async function gerarRelatorio(dados: RelatorioDTO) {
     if (error.message && error.message.includes("Tipo de relatório")) {
       throw error;
     }
-    
+
     const relatorios = await prisma.relatorio.findMany({
       where: { nome_relatorio: dados.nome_relatorio },
       orderBy: { createdAt: "desc" },
@@ -100,47 +108,47 @@ export async function gerarRelatorio(dados: RelatorioDTO) {
 
 async function gerarRelatorioEventos(parametros: any) {
   try {
-    const response = await eventosClient.get("/evento");
-    let eventos = response.data;
+    const response = (await eventosClient.get("/evento")) as { data: any[] };
+    let eventos: any[] = response.data;
 
     if (parametros.data_inicio) {
-      eventos = eventos.filter((e: any) => 
-        new Date(e.data_inicio) >= new Date(parametros.data_inicio)
+      eventos = eventos.filter(
+        (e: any) => new Date(e.data_inicio) >= new Date(parametros.data_inicio)
       );
     }
     if (parametros.data_fim) {
-      eventos = eventos.filter((e: any) => 
-        new Date(e.data_inicio) <= new Date(parametros.data_fim)
+      eventos = eventos.filter(
+        (e: any) => new Date(e.data_inicio) <= new Date(parametros.data_fim)
       );
     }
     if (parametros.status) {
       eventos = eventos.filter((e: any) => e.status === parametros.status);
     }
     if (parametros.id_usuario) {
-      eventos = eventos.filter((e: any) => e.id_usuario === parametros.id_usuario);
+      eventos = eventos.filter(
+        (e: any) => e.id_usuario === parametros.id_usuario
+      );
     }
 
     const eventosEnriquecidos = await Promise.all(
       eventos.map(async (evento: any) => {
         let usuario = null;
-        
         const endpoints = [
           `/cliente/${evento.id_usuario}`,
           `/artista/${evento.id_usuario}`,
           `/casaDeShow/${evento.id_usuario}`,
         ];
-        
         for (const endpoint of endpoints) {
           try {
-            const response = await usuariosClient.get(endpoint).catch(() => null);
+            const response = (await usuariosClient
+              .get(endpoint)
+              .catch(() => null)) as { data?: any } | null;
             if (response?.data) {
               usuario = response.data;
               break;
             }
-          } catch {
-          }
+          } catch {}
         }
-        
         return {
           ...evento,
           usuario: usuario,
@@ -162,47 +170,73 @@ async function gerarRelatorioEventos(parametros: any) {
 
 async function gerarRelatorioUsuarios(parametros: any) {
   try {
-    const usuarios: any[] = [];
+    const usuarios: Array<{
+      id?: string | number;
+      nome?: string;
+      email?: string;
+      tipo_usuario?: string;
+      telefone?: string;
+      [key: string]: any;
+    }> = [];
 
     try {
-      const response = await usuariosClient.get("/cliente", {
-        params: { page: 1, pageSize: 10000 }
-      }).catch(() => null);
+      const response = (await usuariosClient
+        .get("/cliente", {
+          params: { page: 1, pageSize: 10000 },
+        })
+        .catch(() => null)) as { data?: any[] } | null;
       if (response?.data && Array.isArray(response.data)) {
-        usuarios.push(...response.data.map((u: any) => ({ ...u, tipo_usuario: "cliente" })));
+        usuarios.push(
+          ...response.data.map((u: any) => ({ ...u, tipo_usuario: "cliente" }))
+        );
       }
     } catch (error) {
       console.warn("Não foi possível buscar clientes:", error);
     }
 
     try {
-      const response = await usuariosClient.get("/artista", {
-        params: { page: 1, pageSize: 10000 }
-      }).catch(() => null);
+      const response = (await usuariosClient
+        .get("/artista", {
+          params: { page: 1, pageSize: 10000 },
+        })
+        .catch(() => null)) as { data?: any[] } | null;
       if (response?.data && Array.isArray(response.data)) {
-        usuarios.push(...response.data.map((u: any) => ({ ...u, tipo_usuario: "artista" })));
+        usuarios.push(
+          ...response.data.map((u: any) => ({ ...u, tipo_usuario: "artista" }))
+        );
       }
     } catch (error) {
       console.warn("Não foi possível buscar artistas:", error);
     }
 
     try {
-      const response = await usuariosClient.get("/casaDeShow", {
-        params: { page: 1, pageSize: 10000 }
-      }).catch(() => null);
+      const response = (await usuariosClient
+        .get("/casaDeShow", {
+          params: { page: 1, pageSize: 10000 },
+        })
+        .catch(() => null)) as { data?: any[] } | null;
       if (response?.data && Array.isArray(response.data)) {
-        usuarios.push(...response.data.map((u: any) => ({ ...u, tipo_usuario: "casaDeShow" })));
+        usuarios.push(
+          ...response.data.map((u: any) => ({
+            ...u,
+            tipo_usuario: "casaDeShow",
+          }))
+        );
       }
     } catch (error) {
       console.warn("Não foi possível buscar casas de show:", error);
     }
 
     try {
-      const response = await usuariosClient.get("/adm", {
-        params: { page: 1, pageSize: 10000 }
-      }).catch(() => null);
+      const response = (await usuariosClient
+        .get("/adm", {
+          params: { page: 1, pageSize: 10000 },
+        })
+        .catch(() => null)) as { data?: any[] } | null;
       if (response?.data && Array.isArray(response.data)) {
-        usuarios.push(...response.data.map((u: any) => ({ ...u, tipo_usuario: "adm" })));
+        usuarios.push(
+          ...response.data.map((u: any) => ({ ...u, tipo_usuario: "adm" }))
+        );
       }
     } catch (error) {
       console.warn("Não foi possível buscar administradores:", error);
@@ -210,8 +244,8 @@ async function gerarRelatorioUsuarios(parametros: any) {
 
     let usuariosFiltrados = usuarios;
     if (parametros.tipo_usuario) {
-      usuariosFiltrados = usuariosFiltrados.filter((u: any) => 
-        u.tipo_usuario === parametros.tipo_usuario
+      usuariosFiltrados = usuariosFiltrados.filter(
+        (u: any) => u.tipo_usuario === parametros.tipo_usuario
       );
     }
 
@@ -234,8 +268,20 @@ async function gerarRelatorioPropostas(parametros: any) {
       eventosClient.get("/propostaCasa").catch(() => ({ data: [] })),
     ]);
 
-    let propostas = [
-      ...(propostasArtista.data || []).map((p: any) => ({ ...p, tipo: "ARTISTA" })),
+    let propostas: Array<{
+      id_proposta_artista?: string | number;
+      id_proposta_casa?: string | number;
+      tipo?: string;
+      data_proposta?: string;
+      data_evento?: string;
+      valor_ofertado?: number;
+      status?: string;
+      [key: string]: any;
+    }> = [
+      ...(propostasArtista.data || []).map((p: any) => ({
+        ...p,
+        tipo: "ARTISTA",
+      })),
       ...(propostasCasa.data || []).map((p: any) => ({ ...p, tipo: "CASA" })),
     ];
 
@@ -243,13 +289,14 @@ async function gerarRelatorioPropostas(parametros: any) {
       propostas = propostas.filter((p: any) => p.status === parametros.status);
     }
     if (parametros.data_inicio) {
-      propostas = propostas.filter((p: any) => 
-        new Date(p.data_proposta) >= new Date(parametros.data_inicio)
+      propostas = propostas.filter(
+        (p: any) =>
+          new Date(p.data_proposta) >= new Date(parametros.data_inicio)
       );
     }
     if (parametros.data_fim) {
-      propostas = propostas.filter((p: any) => 
-        new Date(p.data_proposta) <= new Date(parametros.data_fim)
+      propostas = propostas.filter(
+        (p: any) => new Date(p.data_proposta) <= new Date(parametros.data_fim)
       );
     }
 
@@ -268,25 +315,35 @@ async function gerarRelatorioPropostas(parametros: any) {
 
 async function gerarRelatorioArtistas(parametros: any) {
   try {
-    const response = await usuariosClient.get("/artista", {
-      params: { page: 1, pageSize: 10000 }
-    }).catch(() => ({ data: [] }));
-    
-    let artistas = response.data || [];
+    const response = (await usuariosClient
+      .get("/artista", {
+        params: { page: 1, pageSize: 10000 },
+      })
+      .catch(() => ({ data: [] }))) as { data?: any[] };
+    let artistas: Array<{
+      id?: string | number;
+      nome_artista?: string;
+      genero_musical?: string;
+      cache_min?: number;
+      verificado?: boolean;
+      [key: string]: any;
+    }> = response.data || [];
 
     if (parametros.verificado !== undefined) {
       const artistasCompletos = await Promise.all(
         artistas.map(async (a: any) => {
           try {
-            const detalhes = await usuariosClient.get(`/artista/${a.id}`).catch(() => null);
+            const detalhes = (await usuariosClient
+              .get(`/artista/${a.id}`)
+              .catch(() => null)) as { data?: any } | null;
             return detalhes?.data || a;
           } catch {
             return a;
           }
         })
       );
-      artistas = artistasCompletos.filter((a: any) => 
-        a.verificado === parametros.verificado
+      artistas = artistasCompletos.filter(
+        (a: any) => a.verificado === parametros.verificado
       );
     }
 
@@ -305,16 +362,29 @@ async function gerarRelatorioArtistas(parametros: any) {
 
 async function gerarRelatorioCasasShow(parametros: any) {
   try {
-    const response = await usuariosClient.get("/casaDeShow", {
-      params: { page: 1, pageSize: 10000 }
-    }).catch(() => ({ data: [] }));
-    
-    let casas = response.data || [];
+    const response = (await usuariosClient
+      .get("/casaDeShow", {
+        params: { page: 1, pageSize: 10000 },
+      })
+      .catch(() => ({ data: [] }))) as { data?: any[] };
+    let casas: Array<{
+      id?: string | number;
+      nome?: string;
+      email?: string;
+      nome_fantasia?: string;
+      cnpj?: string;
+      capacidade?: number;
+      endereco?: string;
+      estado?: string;
+      [key: string]: any;
+    }> = response.data || [];
 
     const casasCompletas = await Promise.all(
       casas.map(async (c: any) => {
         try {
-          const detalhes = await usuariosClient.get(`/casaDeShow/${c.id}`).catch(() => null);
+          const detalhes = (await usuariosClient
+            .get(`/casaDeShow/${c.id}`)
+            .catch(() => null)) as { data?: any } | null;
           return detalhes?.data || c;
         } catch {
           return c;
@@ -348,7 +418,8 @@ async function gerarRelatorioCasasShow(parametros: any) {
 }
 
 async function gerarRelatorioEventosPorPeriodo(parametros: any) {
-  const dataInicio = parametros.data_inicio || dayjs().subtract(30, "days").toISOString();
+  const dataInicio =
+    parametros.data_inicio || dayjs().subtract(30, "days").toISOString();
   const dataFim = parametros.data_fim || dayjs().toISOString();
 
   const eventos = await gerarRelatorioEventos({
@@ -432,19 +503,34 @@ export async function exportarRelatorioParaExcel(id: string) {
 
   worksheet.addRow(["Relatório:", relatorio.nome_relatorio]);
   worksheet.addRow(["Tipo:", relatorio.tipo_relatorio]);
-  worksheet.addRow(["Data de Criação:", relatorio.createdAt.toLocaleString("pt-BR")]);
+  worksheet.addRow([
+    "Data de Criação:",
+    relatorio.createdAt.toLocaleString("pt-BR"),
+  ]);
   worksheet.addRow([]);
 
   const dados = relatorio.dados;
 
   if (dados.eventos) {
-    worksheet.addRow(["ID Evento", "Título", "Data Início", "Data Fim", "Local", "Status", "Usuário"]);
+    worksheet.addRow([
+      "ID Evento",
+      "Título",
+      "Data Início",
+      "Data Fim",
+      "Local",
+      "Status",
+      "Usuário",
+    ]);
     dados.eventos.forEach((evento: any) => {
       worksheet.addRow([
         evento.id_evento,
         evento.titulo,
-        evento.data_inicio ? new Date(evento.data_inicio).toLocaleString("pt-BR") : "",
-        evento.data_fim ? new Date(evento.data_fim).toLocaleString("pt-BR") : "",
+        evento.data_inicio
+          ? new Date(evento.data_inicio).toLocaleString("pt-BR")
+          : "",
+        evento.data_fim
+          ? new Date(evento.data_fim).toLocaleString("pt-BR")
+          : "",
         evento.local,
         evento.status,
         evento.usuario?.nome || evento.id_usuario,
@@ -462,19 +548,36 @@ export async function exportarRelatorioParaExcel(id: string) {
       ]);
     });
   } else if (dados.propostas) {
-    worksheet.addRow(["ID Proposta", "Tipo", "Data Proposta", "Data Evento", "Valor Ofertado", "Status"]);
+    worksheet.addRow([
+      "ID Proposta",
+      "Tipo",
+      "Data Proposta",
+      "Data Evento",
+      "Valor Ofertado",
+      "Status",
+    ]);
     dados.propostas.forEach((proposta: any) => {
       worksheet.addRow([
         proposta.id_proposta_artista || proposta.id_proposta_casa,
         proposta.tipo,
-        proposta.data_proposta ? new Date(proposta.data_proposta).toLocaleString("pt-BR") : "",
-        proposta.data_evento ? new Date(proposta.data_evento).toLocaleString("pt-BR") : "",
+        proposta.data_proposta
+          ? new Date(proposta.data_proposta).toLocaleString("pt-BR")
+          : "",
+        proposta.data_evento
+          ? new Date(proposta.data_evento).toLocaleString("pt-BR")
+          : "",
         proposta.valor_ofertado,
         proposta.status,
       ]);
     });
   } else if (dados.artistas) {
-    worksheet.addRow(["ID Artista", "Nome Artista", "Gênero Musical", "Cache Mínimo", "Verificado"]);
+    worksheet.addRow([
+      "ID Artista",
+      "Nome Artista",
+      "Gênero Musical",
+      "Cache Mínimo",
+      "Verificado",
+    ]);
     dados.artistas.forEach((artista: any) => {
       worksheet.addRow([
         artista.id_usuario || artista.id,
@@ -485,7 +588,14 @@ export async function exportarRelatorioParaExcel(id: string) {
       ]);
     });
   } else if (dados.casas) {
-    worksheet.addRow(["ID Casa", "Nome Fantasia", "CNPJ", "Capacidade", "Endereço", "Estado"]);
+    worksheet.addRow([
+      "ID Casa",
+      "Nome Fantasia",
+      "CNPJ",
+      "Capacidade",
+      "Endereço",
+      "Estado",
+    ]);
     dados.casas.forEach((casa: any) => {
       worksheet.addRow([
         casa.id_usuario || casa.id,
@@ -525,4 +635,3 @@ export async function exportarRelatorioParaExcel(id: string) {
 
   return workbook;
 }
-
