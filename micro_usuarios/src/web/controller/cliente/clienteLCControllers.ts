@@ -17,7 +17,6 @@ export const login: RequestHandler = async (req, res) => {
       return;
     }
 
-    
     const isMatch = await bcrypt.compare(senha, cliente.usuario.senha_hash);
 
     if (!isMatch) {
@@ -25,7 +24,6 @@ export const login: RequestHandler = async (req, res) => {
       return;
     }
 
-    
     const token = jwt.sign(
       { id: cliente.id_usuario, email: cliente.usuario.email },
       JWT_SECRET,
@@ -56,13 +54,13 @@ export const cadastro: RequestHandler = async (req, res) => {
     } = req.body;
 
     const salt = await bcrypt.genSalt(10);
-  
+
     const senha_hash = await bcrypt.hash(senha, salt);
 
     const novoCliente = await clienteService.cadastro({
       nome,
       email,
-      senha: senha_hash, 
+      senha: senha_hash,
       telefone,
       apelido,
       preferencias,
@@ -75,7 +73,7 @@ export const cadastro: RequestHandler = async (req, res) => {
     });
   } catch (e) {
     console.error("Erro no cadastro:", e);
-    
+
     res.status(500).json({ message: `Erro no cadastro interno.` });
   }
 };
@@ -114,7 +112,6 @@ export const buscarClientePorId: RequestHandler = async (req, res) => {
 
 export const cadastrarCliente: RequestHandler = async (req, res) => {
   try {
-
     const clienteDTO = req.body;
     const novoCliente = await clienteService.cadastrarCliente(clienteDTO);
 

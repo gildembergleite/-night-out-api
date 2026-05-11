@@ -3,26 +3,20 @@ import type { RequestHandler } from "express";
 import jwt from "jsonwebtoken";
 import * as casaService from "../../service/casa_de_show/casaDeShowService";
 
-
-const JWT_SECRET = process.env.JWT_SECRET || "SEGREDO_SUPER_FORTE_DO_JWT"; 
-
-
-
+const JWT_SECRET = process.env.JWT_SECRET || "SEGREDO_SUPER_FORTE_DO_JWT";
 
 export const login: RequestHandler = async (req, res) => {
   try {
     const email = String(req.body.email);
     const senha = String(req.body.senha);
 
-   
-    const casaDeShow = await casaService.buscarCasaParaLogin(email); 
+    const casaDeShow = await casaService.buscarCasaParaLogin(email);
 
     if (!casaDeShow) {
       res.status(401).json({ message: "Email ou senha inválidos!" });
       return;
     }
 
-  
     const isMatch = await bcrypt.compare(senha, casaDeShow.usuario.senha_hash);
 
     if (!isMatch) {
@@ -31,10 +25,10 @@ export const login: RequestHandler = async (req, res) => {
     }
 
     const token = jwt.sign(
-      { 
-        id: casaDeShow.id_usuario, 
+      {
+        id: casaDeShow.id_usuario,
         email: casaDeShow.usuario.email,
-        tipo: casaDeShow.usuario.tipo
+        tipo: casaDeShow.usuario.tipo,
       },
       JWT_SECRET,
       { expiresIn: "1h" }
@@ -56,7 +50,7 @@ export const cadastro: RequestHandler = async (req, res) => {
     const {
       nome,
       email,
-      senha, 
+      senha,
       telefone,
       nome_fantasia,
       cnpj,
@@ -69,11 +63,9 @@ export const cadastro: RequestHandler = async (req, res) => {
       geo_lng,
     } = req.body;
 
-   
     const salt = await bcrypt.genSalt(10);
     const senha_hash = await bcrypt.hash(senha, salt);
 
-   
     const novaCasa = await casaService.cadastro({
       nome,
       email,
@@ -99,8 +91,6 @@ export const cadastro: RequestHandler = async (req, res) => {
     res.status(500).json({ message: `Erro no cadastro interno.` });
   }
 };
-
-
 
 export const listarCasasDeShow: RequestHandler = async (req, res) => {
   try {
@@ -135,8 +125,7 @@ export const buscarCasaDeShowPorId: RequestHandler = async (req, res) => {
 
 export const cadastrarCasa: RequestHandler = async (req, res) => {
   try {
-    
-    const casaDTO = req.body; 
+    const casaDTO = req.body;
     const novaCasa = await casaService.cadastrarCasa(casaDTO);
 
     res.status(201).json({
