@@ -74,7 +74,7 @@ export const cadastro: RequestHandler = async (req, res) => {
   } catch (e) {
     console.error("Erro no cadastro:", e);
 
-    res.status(500).json({ message: `Erro no cadastro interno.` });
+    res.status(500).json({ message: `Erro no cadastro interno.`, e });
   }
 };
 
